@@ -16,6 +16,7 @@ export enum Genero {
   MASCULINO = 'masculino',
   FEMENINO = 'femenino',
   NO_BINARIO = 'no_binario',
+  NO_RESPONDER = 'no_responder',
 }
 
 @Entity('users')
@@ -46,6 +47,7 @@ export class User {
   @Column({
     type: 'enum',
     enum: Genero,
+    default: Genero.NO_RESPONDER,
   })
   genero: Genero;
 
@@ -89,7 +91,7 @@ export class User {
     length: 100,
     nullable: false,
   })
-  país: string;
+  paisDeResidencia: string;
 
   @Column({ name: 'role_id' })
   roleId: number;
