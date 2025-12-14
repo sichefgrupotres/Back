@@ -12,25 +12,84 @@ export enum UserStatus {
   DELETED = 'deleted',
 }
 
+export enum Genero {
+  MASCULINO = 'masculino',
+  FEMENINO = 'femenino',
+  NO_BINARIO = 'no_binario',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 100 })
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+  })
   nombre: string;
 
-  @Column({ length: 100 })
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+  })
   apellido: string;
 
-  @Column({ unique: true })
+  @Column({
+    type: 'date',
+    nullable: false,
+  })
+  cumpleaños: Date;
+
+  @Column({
+    type: 'enum',
+    enum: Genero,
+  })
+  genero: Genero;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+  })
+  nacionalidad: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    unique: true,
+    nullable: false,
+  })
   email: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 60,
+    nullable: false,
+  })
   password: string;
 
-  @Column({ nullable: true })
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
   avatarUrl: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+  })
+  ciudad: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+  })
+  país: string;
 
   @Column({ name: 'role_id' })
   roleId: number;
