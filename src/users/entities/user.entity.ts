@@ -1,9 +1,11 @@
+import { Post } from 'src/posts/entities/post.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 export enum UserStatus {
@@ -111,4 +113,7 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Post, (post) => post.creator)
+  posts: [];
 }
