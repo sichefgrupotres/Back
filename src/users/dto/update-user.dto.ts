@@ -4,7 +4,7 @@ import { CreateUserDto } from './create-user.dto';
 export class UpdateUserDto extends PartialType(
   PickType(CreateUserDto, [
     'password',
-    'cumpleaños',
+    'fechaDeNacimiento',
     'avatarUrl',
     'nacionalidad',
     'genero',

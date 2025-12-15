@@ -42,7 +42,7 @@ export class User {
     type: 'date',
     nullable: false,
   })
-  cumpleaños: Date;
+  fechaDeNacimiento: Date;
 
   @Column({
     type: 'enum',
@@ -111,4 +111,5 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+  static STATUS: any;
 }
