@@ -25,7 +25,6 @@ import { PostsModule } from './posts/posts.module';
         autoLoadEntities: true,
         synchronize: true,
         dropSchema: true,
-
         logging: true,
       }),
     }),
