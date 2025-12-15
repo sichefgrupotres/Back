@@ -1,8 +1,9 @@
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
-import { Injectable } from '@nestjs/common';
+import { User, UserStatus } from './entities/user.entity';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -11,14 +12,34 @@ export class UsersRepository {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  findAll() {
-    return this.usersRepository.find();
+  async findAll() {
+    return await this.usersRepository.find();
   }
 
-  async create(user: CreateUserDto) {
-    const newUser = this.usersRepository.create(user);
-    await this.usersRepository.save(newUser);
+  async create(user: CreateUserDto): Promise<User> {
+    try {
+      const newUser = this.usersRepository.create({
+        ...user,
+        roleId: 2,
+        status: UserStatus.ACTIVE,
+      });
+      await this.usersRepository.save(newUser);
+      return newUser;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 
-    return 'Usuario creado con exito';
+  async findOne(id: string) {
+    try {
+      return await this.usersRepository.findOneBy({ id });
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const userUpdated = await this.usersRepository.update(id, updateUserDto);
+    return userUpdated;
   }
 }
