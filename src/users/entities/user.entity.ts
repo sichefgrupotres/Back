@@ -44,7 +44,7 @@ export class User {
     type: 'date',
     nullable: false,
   })
-  cumpleaños: Date;
+  fechaDeNacimiento: Date;
 
   @Column({
     type: 'enum',

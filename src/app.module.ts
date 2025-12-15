@@ -24,6 +24,9 @@ import { PostsModule } from './posts/posts.module';
         database: config.get('DB_NAME'),
         autoLoadEntities: true,
         synchronize: true,
+        dropSchema: true,
+
+        logging: true,
       }),
     }),
 
