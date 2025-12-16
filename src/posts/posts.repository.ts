@@ -12,9 +12,7 @@ export class PostsRepository {
   ) {}
 
   async create(post: CreatePostDto): Promise<Post> {
-    // if (!user) {
-    //   throw new BadRequestException('Usuario no válido');
-    // }
+
     const newPost = this.postsRepository.create({
       ...post,
     });
