@@ -43,7 +43,7 @@ export class UsersService {
 
     return {
       id: user.id,
-      nombre: user.nombre,
+      nombre: user.name,
       apellido: user.lastname,
       email: user.email,
     };
