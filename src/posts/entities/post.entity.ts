@@ -9,6 +9,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum Difficulty {
+  EASY = 'easy',
+  MEDIUM = 'medium',
+  HARD = 'hard',
+}
+
 @Entity('posts')
 export class Post {
   @PrimaryGeneratedColumn('uuid')
@@ -19,20 +25,38 @@ export class Post {
     length: 100,
     nullable: false,
   })
-  titulo: string;
+  title: string;
 
   @Column({
     type: 'varchar',
     length: 100,
     nullable: false,
   })
-  descripcion: string;
+  description: string;
 
   @Column({
     type: 'text',
     nullable: true,
   })
   imagen: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  ingredients: string;
+
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
+  isPremium: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: Difficulty,
+  })
+  difficulty: Difficulty;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

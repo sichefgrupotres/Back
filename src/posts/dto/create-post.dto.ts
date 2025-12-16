@@ -1,10 +1,13 @@
 import {
+  IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUrl,
   MaxLength,
 } from 'class-validator';
+import { Difficulty } from '../entities/post.entity';
 
 export class CreatePostDto {
   @IsNotEmpty({ message: 'El título es obligatorio' })
@@ -19,7 +22,20 @@ export class CreatePostDto {
   })
   description: string;
 
-  @IsOptional({ message: 'La imagen es obligatoria' })
+  @IsOptional()
   @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
   imagen: string;
+
+  @IsNotEmpty({ message: 'La imagen es obligatoria' })
+  @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
+  ingredients: string;
+
+  @IsOptional()
+  @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
+  isPremium?: boolean;
+
+  @IsEnum(Difficulty, {
+    message: 'La dificultad debe ser easy, medium o hard',
+  })
+  difficulty: Difficulty;
 }
