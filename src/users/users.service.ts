@@ -14,16 +14,20 @@ export class UsersService {
     return 'Usuario creado con exito';
   }
 
+  findOneEmail(email: string) {
+    const foundEmail = this.usersRepository.findOneEmail(email);
+    if (!foundEmail) {
+      throw new NotFoundException('Email no encontrado');
+    }
+    return foundEmail;
+  }
+
   findAll() {
     return this.usersRepository.findAll();
   }
 
   findOne(id: string) {
     return this.usersRepository.findOne(id);
-  }
-
-  findOneEmail (email:string) {
-    return this.usersRepository.findOne(email)
   }
 
   async update(
