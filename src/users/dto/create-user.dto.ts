@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -12,16 +13,19 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'El nombre es requerido' })
   @Length(3, 100, { message: 'Debe tener una longitud de 3 a 100 caracteres' })
   @IsString()
+  @ApiProperty({ example: 'Federico' })
   name: string;
 
   @IsNotEmpty({ message: 'El apellido es requerido' })
   @Length(3, 100, { message: 'Debe tener una longitud de 3 a 100 caracteres' })
   @IsString()
+  @ApiProperty({ example: 'Ferrer' })
   lastname: string;
 
   @IsEmail()
   @IsNotEmpty({ message: 'El email es requerido' })
   @IsString()
+  @ApiProperty({ example: 'federico@mail.com' })
   email: string;
 
   @IsNotEmpty({ message: 'El password es requerido' })
@@ -39,8 +43,10 @@ export class CreateUserDto {
         'Debe contener al menos una minúscula, una mayúscula, un número y un caracter especial: !@#$%^&*',
     },
   )
+  @ApiProperty({ example: 'Federico2025$' })
   password: string;
 
+  @ApiProperty({ example: 'Federico2025$' })
   @IsNotEmpty()
   @Validate(MatchPassword, ['password'])
   confirmPassword: string;
