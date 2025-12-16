@@ -4,9 +4,9 @@ import { LoginUserDto } from 'src/users/dto/login-user.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
-  @Post()
+  @Post('signin')
   async signin(@Body() credentials: LoginUserDto) {
     return this.authService.signinService(credentials);
   }
