@@ -34,7 +34,7 @@ export class AuthService {
       rol: foundUser.roleId,
     };
 
-    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const token = this.jwtService.sign(payload);
     return {
       message: 'Usuario logueado con éxito',
       token: token,
