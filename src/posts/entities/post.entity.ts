@@ -19,14 +19,14 @@ export class Post {
     length: 100,
     nullable: false,
   })
-  título: string;
+  titulo: string;
 
   @Column({
     type: 'varchar',
     length: 100,
     nullable: false,
   })
-  descripción: string;
+  descripcion: string;
 
   @Column({
     type: 'text',
