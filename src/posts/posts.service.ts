@@ -22,9 +22,8 @@ export class PostsService {
     return this.postsRepository.findOne(id);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  update(id: string, updatePostDto: UpdatePostDto) {
+    return this.postsRepository.update(id, updatePostDto);
   }
 
   remove(id: string) {
