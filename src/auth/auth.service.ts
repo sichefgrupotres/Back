@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-// import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
     if (!foundUser) {
       throw new UnauthorizedException('Email y/o contraseña inccorrecto/s.!');
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const validPassword = await bcrypt.compare(password, foundUser.password);
     if (!validPassword) {
       throw new UnauthorizedException('Email y/o contraseña inccorrecto/s.!');
