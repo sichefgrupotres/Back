@@ -44,7 +44,7 @@ export class UsersService {
     return {
       id: user.id,
       nombre: user.nombre,
-      apellido: user.apellido,
+      apellido: user.lastname,
       email: user.email,
     };
   }

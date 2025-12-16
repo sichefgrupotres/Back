@@ -17,7 +17,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'El apellido es requerido' })
   @Length(3, 100, { message: 'Debe tener una longitud de 3 a 100 caracteres' })
   @IsString()
-  apellido: string;
+  lastname: string;
 
   @IsEmail()
   @IsNotEmpty({ message: 'El email es requerido' })
