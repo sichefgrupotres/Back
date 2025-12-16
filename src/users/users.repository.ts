@@ -4,14 +4,14 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from "bcrypt"
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersRepository {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async findAll() {
     return await this.usersRepository.find();
@@ -19,11 +19,11 @@ export class UsersRepository {
 
   async create(user: CreateUserDto): Promise<User> {
     try {
-      const { password } = user
-      const hashedPassword = await bcrypt.hash(password, 10)
+      const { password } = user;
+      const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = this.usersRepository.create({
         ...user,
-        password : hashedPassword,
+        password: hashedPassword,
         roleId: 2,
         status: UserStatus.ACTIVE,
       });
@@ -42,7 +42,7 @@ export class UsersRepository {
     }
   }
 
-  async findOneEmailRepository(email: string) {
+  async findOneEmail(email: string) {
     try {
       return await this.usersRepository.findOneBy({ email });
     } catch (error) {
