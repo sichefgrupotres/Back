@@ -41,26 +41,6 @@ export class User {
   apellido: string;
 
   @Column({
-    type: 'date',
-    nullable: false,
-  })
-  fechaDeNacimiento: Date;
-
-  @Column({
-    type: 'enum',
-    enum: Genero,
-    default: Genero.NO_RESPONDER,
-  })
-  genero: Genero;
-
-  @Column({
-    type: 'varchar',
-    length: 100,
-    nullable: false,
-  })
-  nacionalidad: string;
-
-  @Column({
     type: 'varchar',
     length: 100,
     unique: true,
@@ -74,26 +54,6 @@ export class User {
     nullable: false,
   })
   password: string;
-
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  avatarUrl: string;
-
-  @Column({
-    type: 'varchar',
-    length: 100,
-    nullable: false,
-  })
-  ciudad: string;
-
-  @Column({
-    type: 'varchar',
-    length: 100,
-    nullable: false,
-  })
-  paisDeResidencia: string;
 
   @Column({ name: 'role_id' })
   roleId: number;

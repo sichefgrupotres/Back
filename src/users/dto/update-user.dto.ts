@@ -2,13 +2,5 @@ import { PartialType, PickType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
 
 export class UpdateUserDto extends PartialType(
-  PickType(CreateUserDto, [
-    'password',
-    'fechaDeNacimiento',
-    'avatarUrl',
-    'nacionalidad',
-    'genero',
-    'paisDeResidencia',
-    'ciudad',
-  ] as const),
+  PickType(CreateUserDto, ['password'] as const),
 ) {}
