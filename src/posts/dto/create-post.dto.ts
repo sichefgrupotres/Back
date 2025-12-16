@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsUrl, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+} from 'class-validator';
 
 export class CreatePostDto {
   @IsNotEmpty({ message: 'El título es obligatorio' })
@@ -13,7 +19,7 @@ export class CreatePostDto {
   })
   descripción: string;
 
-  @IsNotEmpty({ message: 'La imagen es obligatoria' })
+  @IsOptional({ message: 'La imagen es obligatoria' })
   @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
   imagen: string;
 }

@@ -30,7 +30,7 @@ export class Post {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   imagen: string;
 
