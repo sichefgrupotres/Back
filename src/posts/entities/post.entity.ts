@@ -49,12 +49,15 @@ export class Post {
   @Column({
     type: 'boolean',
     default: false,
+    nullable: true,
   })
   isPremium: boolean;
 
   @Column({
     type: 'enum',
     enum: Difficulty,
+    nullable: true,
+    default: Difficulty.EASY,
   })
   difficulty: Difficulty;
 

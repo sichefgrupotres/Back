@@ -2,6 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { loggerGlobal } from './middlawares/logger.middlaware';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,14 @@ async function bootstrap() {
   app.enableCors({
     origin: true,
   });
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Si_Chef')
+    .setDescription('API para demo del Proyecto Si_Chef')
+    .setVersion('1.0.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api', app, document);
   const port = process.env.PORT || 3000;
 
   await app.listen(port);
