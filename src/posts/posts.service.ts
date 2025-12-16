@@ -15,11 +15,11 @@ export class PostsService {
   }
 
   findAll() {
-    return `This action returns all posts`;
+    return this.postsRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  findOne(id: string) {
+    return this.postsRepository.findOne(id);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,7 +27,7 @@ export class PostsService {
     return `This action updates a #${id} post`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  remove(id: string) {
+    return this.postsRepository.remove(id);
   }
 }
