@@ -1,17 +1,11 @@
 import {
-  IsDateString,
   IsEmail,
-  IsEnum,
   IsNotEmpty,
-  IsOptional,
   IsString,
   IsStrongPassword,
-  IsUrl,
   Length,
-  Matches,
   Validate,
 } from 'class-validator';
-import { Genero } from '../entities/user.entity';
 import { MatchPassword } from 'src/decorators/matchPassword.decorators';
 
 export class CreateUserDto {
@@ -24,14 +18,6 @@ export class CreateUserDto {
   @Length(3, 100, { message: 'Debe tener una longitud de 3 a 100 caracteres' })
   @IsString()
   apellido: string;
-
-  @IsDateString()
-  @IsNotEmpty({ message: 'La fecha de cumpleaños es requerida' })
-  fechaDeNacimiento: string;
-
-  @Length(3, 100, { message: 'Debe tener una longitud de 3 a 100 caracteres' })
-  @IsString()
-  nacionalidad: string;
 
   @IsEmail()
   @IsNotEmpty({ message: 'El email es requerido' })
@@ -58,29 +44,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Validate(MatchPassword, ['password'])
   confirmPassword: string;
-
-  @IsString()
-  @Length(5, 50, { message: 'Debe tener una longitud de 5 a 20 caracteres' })
-  @Matches(/^[A-Za-zÀ-ÿ\s]+$/, {
-    message: 'La ciudad solo puede contener letras, acentos y espacios',
-  })
-  ciudad: string;
-
-  @IsString()
-  @Length(5, 50, { message: 'Debe tener una longitud de 5 a 50 caracteres' })
-  @Matches(/^[A-Za-zÀ-ÿ\s]+$/, {
-    message: 'El país solo puede contener letras, acentos y espacios',
-  })
-  paisDeResidencia: string;
-
-  @IsOptional()
-  @IsEnum(Genero, {
-    message:
-      'El género debe ser masculino, femenino, no_binario o no_responder',
-  })
-  genero?: Genero;
-
-  @IsOptional()
-  @IsUrl({}, { message: 'El avatar debe ser una URL válida' })
-  avatarUrl?: string;
 }
