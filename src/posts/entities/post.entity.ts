@@ -38,7 +38,13 @@ export class Post {
     type: 'text',
     nullable: true,
   })
-  imagen: string;
+  imageUrl: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true })
+  cloudinaryId?: string;
+
 
   @Column({
     type: 'text',
