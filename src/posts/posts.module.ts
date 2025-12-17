@@ -6,10 +6,11 @@ import { Post } from './entities/post.entity';
 import { PostsRepository } from './posts.repository';
 import { User } from 'src/users/entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { CloudinaryConfig } from 'src/config/cloudinary';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Post, User]), AuthModule],
   controllers: [PostsController],
-  providers: [PostsService, PostsRepository],
+  providers: [PostsService, PostsRepository,CloudinaryConfig],
 })
 export class PostsModule {}

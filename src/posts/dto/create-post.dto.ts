@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { Difficulty } from '../entities/post.entity';
 
+
 export class CreatePostDto {
   @IsNotEmpty({ message: 'El título es obligatorio' })
   @IsString({ message: 'El título debe ser una cadena de texto' })
@@ -33,7 +34,7 @@ export class CreatePostDto {
   @IsOptional()
   @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
   @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
-  imagen?: string;
+  imageUrl?: string;
 
   @IsOptional()
   @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
@@ -48,4 +49,7 @@ export class CreatePostDto {
   })
   @IsEnum(Difficulty)
   difficulty: Difficulty;
+  
+
 }
+

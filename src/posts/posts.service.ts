@@ -6,13 +6,26 @@ import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PostsService {
-  constructor(private postsRepository: PostsRepository) {}
+  constructor(private postsRepository: PostsRepository) { }
 
-  async create(post: CreatePostDto, user: User) {
-    const postCreated = await this.postsRepository.create(post, user);
-    if (!postCreated) return 'Error al crear el post';
-    return 'post creado con éxito';
-  }
+async create(
+  post: Partial<CreatePostDto>,
+  file: Express.Multer.File,
+  user: User,
+) {
+  const response = await this.postsRepository.uploadImage(file);
+
+  const postCreate = {
+    title: post.title,
+    description: post.description,
+    imageUrl: response.secure_url
+  };
+
+  const postCreated = await this.postsRepository.create(postCreate,user);
+
+  if (!postCreated) return 'Error al crear el post';
+  return 'post creado con éxito';
+}
 
   findAll() {
     return this.postsRepository.findAll();
