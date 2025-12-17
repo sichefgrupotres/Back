@@ -14,8 +14,8 @@ export class UsersService {
     return 'Usuario creado con exito';
   }
 
-  findOneEmail(email: string) {
-    const foundEmail = this.usersRepository.findOneEmail(email);
+  async findOneEmail(email: string) {
+    const foundEmail = await this.usersRepository.findOneEmail(email);
     if (!foundEmail) {
       throw new NotFoundException('Email no encontrado');
     }
