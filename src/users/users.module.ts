@@ -12,4 +12,4 @@ import { Post } from 'src/posts/entities/post.entity';
   providers: [UsersService, UsersRepository],
   exports: [UsersService, UsersRepository],
 })
-export class UsersModule { }
+export class UsersModule {}

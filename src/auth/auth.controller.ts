@@ -10,7 +10,7 @@ export class AuthController {
 
   @Post('signin')
   @ApiOperation({
-    summary: 'Logueo de a la cuenta de usuario',
+    summary: 'Inicio de sesion de usuario',
   })
   @Post()
   async signin(@Body() credentials: LoginUserDto) {

@@ -7,11 +7,12 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -20,7 +21,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Registro de un nuevo usuario',
   })
-  @Post()
+  @Post('register')
   create(@Body() createUserDto: CreateUserDto) {
     const newUser = this.usersService.create(createUserDto);
     return newUser;
@@ -38,16 +39,14 @@ export class UsersController {
   @ApiOperation({
     summary: 'Buscar a un usuario por su email',
   })
-  @ApiBody({
-    schema: {
-      example: {
-        email: 'federico@mail.com',
-      },
-    },
+  @ApiQuery({
+    name: 'email',
+    example: 'user@mail.com',
+    required: true,
   })
   @ApiBearerAuth()
   @Get()
-  findOneEmail(@Body() email: string) {
+  findOneEmail(@Query() email: string) {
     return this.usersService.findOne(email);
   }
 

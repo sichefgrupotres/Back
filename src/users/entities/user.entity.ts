@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Post } from 'src/posts/entities/post.entity';
 import {
   Entity,
@@ -19,6 +20,12 @@ export enum Genero {
   FEMENINO = 'femenino',
   NO_BINARIO = 'no_binario',
   NO_RESPONDER = 'no_responder',
+}
+
+export enum Role {
+  ADMIN = 'admin',
+  USER = 'user',
+  CREATOR = 'creator',
 }
 
 @Entity('users')
@@ -53,10 +60,17 @@ export class User {
     length: 60,
     nullable: false,
   })
+  @Exclude()
   password: string;
 
-  @Column({ name: 'role_id' })
-  roleId: number;
+  @Column({
+    name: 'roleId',
+    type: 'enum',
+    enum: Role,
+    nullable: false,
+    default: Role.USER,
+  })
+  roleId: Role;
 
   @Column({
     type: 'enum',
