@@ -1,13 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsStrongPassword,
   Length,
   Validate,
 } from 'class-validator';
 import { MatchPassword } from 'src/decorators/matchPassword.decorators';
+import { Role } from '../entities/user.entity';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'El nombre es requerido' })
@@ -50,4 +53,14 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Validate(MatchPassword, ['password'])
   confirmPassword: string;
+
+  @IsOptional()
+  @ApiProperty({
+    enum: Role,
+    example: Role.USER,
+    description: 'Role del usuario',
+  })
+  @IsEnum(Role)
+  @ApiProperty({ example: Role.USER })
+  roleId?: Role;
 }
