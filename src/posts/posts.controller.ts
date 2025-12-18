@@ -18,11 +18,6 @@ import {
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-// import { User } from 'src/users/entities/user.entity';
-// import { AuthGuard } from 'src/guards/auth.guard';
-// import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-=======
 import { User } from 'src/users/entities/user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
@@ -38,7 +33,27 @@ export class PostsController {
     summary: 'Creacion de un posteo',
   })
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard)
+
+  @ApiConsumes('multipart/form-data')
+@ApiBody({
+  schema: {
+    type: 'object',
+    properties: {
+      title: { type: 'string' },
+      description: { type: 'string' },
+      difficulty: {
+        type: 'string',
+        enum: ['easy', 'medium', 'hard'],
+      },
+      ingredients: { type: 'string' },
+      file: {
+        type: 'string',
+        format: 'binary',
+      },
+    },
+    required: ['title', 'description', 'difficulty', 'ingredients', 'file'],
+  },
+})
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
