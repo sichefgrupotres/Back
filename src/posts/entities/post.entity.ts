@@ -10,9 +10,9 @@ import {
 } from 'typeorm';
 
 export enum Difficulty {
-  EASY = 'easy',
-  MEDIUM = 'medium',
-  HARD = 'hard',
+  facil = 'facil',
+  medio = 'medio',
+  dificil = 'dificil',
 }
 
 @Entity('posts')
@@ -63,7 +63,7 @@ export class Post {
     type: 'enum',
     enum: Difficulty,
     nullable: true,
-    default: Difficulty.EASY,
+    default: Difficulty.facil,
   })
   difficulty: Difficulty;
 

@@ -11,7 +11,9 @@ export class UsersService {
   async create(user: CreateUserDto) {
     const usercreated = this.usersRepository.create(user);
     if (!(await usercreated)) return 'Error al crear el usuario';
-    return 'Usuario creado con exito';
+    return {
+      message: 'Usuario creado correctamente',
+    };
   }
 
   async findOneEmail(email: string) {

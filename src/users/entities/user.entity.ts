@@ -23,9 +23,9 @@ export enum Genero {
 }
 
 export enum Role {
-  ADMIN = 'admin',
-  USER = 'user',
-  CREATOR = 'creator',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  CREATOR = 'CREATOR',
 }
 
 @Entity('users')

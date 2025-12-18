@@ -24,7 +24,7 @@ export class UsersRepository {
       const newUser = this.usersRepository.create({
         ...user,
         password: hashedPassword,
-        roleId: 2,
+        // roleId: user.roleId || 'user',
         status: UserStatus.ACTIVE,
       });
       await this.usersRepository.save(newUser);
