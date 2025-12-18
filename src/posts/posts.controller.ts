@@ -6,16 +6,16 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
-  UseGuards,
+  // Req,
+  // UseGuards,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { User } from 'src/users/entities/user.entity';
-import { AuthGuard } from 'src/guards/auth.guard';
-import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
+// import { User } from 'src/users/entities/user.entity';
+// import { AuthGuard } from 'src/guards/auth.guard';
+// import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Posts')
@@ -27,11 +27,11 @@ export class PostsController {
     summary: 'Creacion de un posteo',
   })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post()
-  create(@Body() post: CreatePostDto, @Req() req: AuthRequest) {
-    const user = req.user as User;
-    const newPost = this.postsService.create(post, user);
+  create(@Body() post: CreatePostDto) {
+    // const user = req.user as User;
+    const newPost = this.postsService.create(post);
     return newPost;
   }
   @ApiOperation({
