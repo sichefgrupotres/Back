@@ -2,18 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
-<<<<<<< Updated upstream
 // import { User } from 'src/users/entities/user.entity';
-=======
-import { User } from 'src/users/entities/user.entity';
-import { UploadImagenClou } from 'src/services/uploadImage';
->>>>>>> Stashed changes
 
 @Injectable()
 export class PostsService {
   constructor(private postsRepository: PostsRepository,
     private readonly uploadImagenClou: UploadImagenClou
   ) { }
+
+import { User } from 'src/users/entities/user.entity';
+
+@Injectable()
+export class PostsService {
+  constructor(private postsRepository: PostsRepository) {}
+
 
   async create(
     post: Partial<CreatePostDto>,
