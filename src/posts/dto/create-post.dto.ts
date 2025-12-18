@@ -1,14 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUrl,
+  // IsUrl,
   MaxLength,
 } from 'class-validator';
-import { Difficulty } from '../entities/post.entity';
+
+export enum Difficulty {
+  facil = 'facil',
+  medio = 'medio',
+  dificil = 'dificil',
+}
 
 
 export class CreatePostDto {
@@ -31,25 +37,24 @@ export class CreatePostDto {
   @ApiProperty({ example: 'Ingredientes de mi receta' })
   ingredients: string;
 
-  @IsOptional()
-  @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
-  @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
-  imageUrl?: string;
-
-  @IsOptional()
-  @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
-  @ApiProperty({ example: 'false' })
-  isPremium?: boolean;
+  // @IsOptional()
+  // @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
+  // @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
+  // imagen?: string;
 
   @IsOptional()
   @ApiProperty({
     enum: Difficulty,
-    example: Difficulty.MEDIUM,
+    example: Difficulty.facil,
     description: 'Nivel de dificultad de la receta',
   })
   @IsEnum(Difficulty)
   difficulty: Difficulty;
-  
 
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
+  @ApiProperty({ example: 'false' })
+  isPremium?: boolean;
 }
 
