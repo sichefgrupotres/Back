@@ -1,5 +1,5 @@
 import {
-  // BadRequestException,
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,46 +10,43 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UploadApiResponse, v2 } from 'cloudinary';
-import toStream = require('buffer-to-stream')
+import bufferToStream from 'buffer-to-stream';
+
+const toStream = bufferToStream;
 
 @Injectable()
 export class PostsRepository {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
-  ) { }
+  ) {}
 
+  async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
+    const newPost = this.postsRepository.create({
+      ...post,
+      creator: user,
+    });
 
-async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
- 
-  const newPost = this.postsRepository.create({
-    ...post,
-    creator: user,
-  });
-  
- if (!user) {
-    throw new BadRequestException('Usuario no válido');
+    if (!user) {
+      throw new BadRequestException('Usuario no válido');
+    }
+    return await this.postsRepository.save(newPost);
   }
-  return await this.postsRepository.save(newPost);
-}
-
 
   async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const upload = v2.uploader.upload_stream(
-        { resource_type: "auto" },
+        { resource_type: 'auto' },
         (error, result) => {
           if (error || !result) {
-            reject(
-              error || new Error(
-                'Error al cargar la imagen'))
+            throw new Error('Error al guardar');
           } else {
-            resolve(result)
+            resolve(result);
           }
-        }
-      )
-      toStream(file.buffer).pipe(upload)
-    })
+        },
+      );
+      toStream(file.buffer).pipe(upload);
+    });
   }
 
   async findAll() {
