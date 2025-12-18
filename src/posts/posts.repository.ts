@@ -27,26 +27,17 @@ export class PostsRepository {
       creator: user,
     });
 
+  async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
+
+    const newPost = this.postsRepository.create({
+      ...post,
+      creator: user,
+    });
+
     if (!user) {
       throw new BadRequestException('Usuario no válido');
     }
     return await this.postsRepository.save(newPost);
-  }
-
-  async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-    return new Promise((resolve) => {
-      const upload = v2.uploader.upload_stream(
-        { resource_type: 'auto' },
-        (error, result) => {
-          if (error || !result) {
-            throw new Error('Error al guardar');
-          } else {
-            resolve(result);
-          }
-        },
-      );
-      toStream(file.buffer).pipe(upload);
-    });
   }
 
   async findAll() {

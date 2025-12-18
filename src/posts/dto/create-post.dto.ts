@@ -27,7 +27,7 @@ export class CreatePostDto {
   @IsNotEmpty({ message: 'La descripción es obligatoria' })
   @IsString({ message: 'La descripción debe ser una cadena de texto' })
   @MaxLength(100, {
-    message: 'La descripción no puede superar los 100 caracteres',
+  message: 'La descripción no puede superar los 100 caracteres',
   })
   @ApiProperty({ example: 'Descripción de mi post' })
   description: string;

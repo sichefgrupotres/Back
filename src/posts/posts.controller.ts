@@ -18,10 +18,15 @@ import {
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+// import { User } from 'src/users/entities/user.entity';
+// import { AuthGuard } from 'src/guards/auth.guard';
+// import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+=======
 import { User } from 'src/users/entities/user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Posts')
@@ -33,6 +38,7 @@ export class PostsController {
     summary: 'Creacion de un posteo',
   })
   @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
