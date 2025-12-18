@@ -16,6 +16,7 @@ export enum Difficulty {
   dificil = 'dificil',
 }
 
+
 export class CreatePostDto {
   @IsNotEmpty({ message: 'El título es obligatorio' })
   @IsString({ message: 'El título debe ser una cadena de texto' })
@@ -56,3 +57,4 @@ export class CreatePostDto {
   @ApiProperty({ example: 'false' })
   isPremium?: boolean;
 }
+

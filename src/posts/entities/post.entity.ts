@@ -34,11 +34,17 @@ export class Post {
   })
   description: string;
 
-  // @Column({
-  //   type: 'text',
-  //   nullable: true,
-  // })
-  // imagen: string;
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  imageUrl: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true })
+  cloudinaryId?: string;
+
 
   @Column({
     type: 'text',
