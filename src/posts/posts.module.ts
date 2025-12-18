@@ -7,10 +7,11 @@ import { PostsRepository } from './posts.repository';
 import { User } from 'src/users/entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { CloudinaryConfig } from 'src/config/cloudinary';
+import { UploadImagenClou } from 'src/services/uploadImage';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Post, User]), AuthModule],
   controllers: [PostsController],
-  providers: [PostsService, PostsRepository,CloudinaryConfig],
+  providers: [PostsService, PostsRepository, CloudinaryConfig, UploadImagenClou],
 })
-export class PostsModule {}
+export class PostsModule { }

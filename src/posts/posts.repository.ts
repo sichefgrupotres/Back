@@ -1,5 +1,5 @@
 import {
-  // BadRequestException,
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,46 +10,34 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UploadApiResponse, v2 } from 'cloudinary';
-import toStream = require('buffer-to-stream')
+import bufferToStream from 'buffer-to-stream';
+
+const toStream = bufferToStream;
 
 @Injectable()
 export class PostsRepository {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
-  ) { }
+  ) {}
 
+  async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
+    const newPost = this.postsRepository.create({
+      ...post,
+      creator: user,
+    });
 
-async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
- 
-  const newPost = this.postsRepository.create({
-    ...post,
-    creator: user,
-  });
-  
- if (!user) {
-    throw new BadRequestException('Usuario no válido');
-  }
-  return await this.postsRepository.save(newPost);
-}
+  async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
 
+    const newPost = this.postsRepository.create({
+      ...post,
+      creator: user,
+    });
 
-  async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-    return new Promise((resolve, reject) => {
-      const upload = v2.uploader.upload_stream(
-        { resource_type: "auto" },
-        (error, result) => {
-          if (error || !result) {
-            reject(
-              error || new Error(
-                'Error al cargar la imagen'))
-          } else {
-            resolve(result)
-          }
-        }
-      )
-      toStream(file.buffer).pipe(upload)
-    })
+    if (!user) {
+      throw new BadRequestException('Usuario no válido');
+    }
+    return await this.postsRepository.save(newPost);
   }
 
   async findAll() {
