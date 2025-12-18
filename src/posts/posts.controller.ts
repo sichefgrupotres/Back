@@ -6,14 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
-  UseGuards,
   ParseUUIDPipe,
   UseInterceptors,
   UploadedFile,
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -27,13 +27,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) { }
-
+  constructor(private readonly postsService: PostsService) {}
 
   @ApiOperation({
     summary: 'Creacion de un posteo',
   })
   @ApiBearerAuth()
+
   @ApiConsumes('multipart/form-data')
 @ApiBody({
   schema: {
@@ -57,17 +57,21 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async create(@Body() post: CreatePostDto, @Req() req: AuthRequest, @UploadedFile(
-    new ParseFilePipe({
-      validators: [
-        new MaxFileSizeValidator({
-          maxSize: 200000,
-          message: "Supera el peso maximo de 200kb"
-        }),
-        new FileTypeValidator({ fileType: /^image\/.*/ })
-      ]
-    })
-  ) file: Express.Multer.File
+  async create(
+    @Body() post: CreatePostDto,
+    @Req() req: AuthRequest,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 200000,
+            message: 'Supera el peso maximo de 200kb',
+          }),
+          new FileTypeValidator({ fileType: /^image\/.*/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ) {
     const user = req.user as User;
     const newPost = this.postsService.create(post, file, user);

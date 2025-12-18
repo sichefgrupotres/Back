@@ -5,18 +5,20 @@ import { PostsRepository } from './posts.repository';
 import { User } from 'src/users/entities/user.entity';
 import { UploadImagenClou } from 'src/services/uploadImage';
 
+
+
 @Injectable()
 export class PostsService {
   constructor(private postsRepository: PostsRepository,
-    private readonly uploadImagenClou: UploadImagenClou
-  ) { }
+    private readonly uploadImageClou: UploadImagenClou) { }
+
 
   async create(
     post: Partial<CreatePostDto>,
     file: Express.Multer.File,
     user: User,
   ) {
-    const response = await this.uploadImagenClou.uploadImage(file);
+    const response = await this.uploadImageClou.uploadImage(file);
 
     const postCreate = {
       title: post.title,
