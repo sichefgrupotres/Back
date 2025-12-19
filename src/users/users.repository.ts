@@ -24,29 +24,41 @@ export class UsersRepository {
       const newUser = this.usersRepository.create({
         ...user,
         password: hashedPassword,
-        // roleId: user.roleId || 'user',
+        roleId: user.roleId || undefined,
         status: UserStatus.ACTIVE,
       });
       await this.usersRepository.save(newUser);
       return newUser;
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      throw new InternalServerErrorException('Error inesperado');
     }
   }
 
   async findOne(id: string) {
     try {
       return await this.usersRepository.findOneBy({ id });
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      throw new InternalServerErrorException('Error inesperado');
     }
   }
 
   async findOneEmail(email: string) {
     try {
       return await this.usersRepository.findOneBy({ email });
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      throw new InternalServerErrorException('Error inesperado');
     }
   }
 
