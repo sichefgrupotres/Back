@@ -12,22 +12,21 @@ export class PostsService {
     private readonly uploadImageClou: UploadImagenClou,
   ) {}
 
-  async create(
-    post: Partial<CreatePostDto>,
-    file: Express.Multer.File,
-    user: User,
-  ) {
+  async create(post: CreatePostDto, file: Express.Multer.File, user: User) {
     const response = await this.uploadImageClou.uploadImage(file);
 
     const postCreate = {
       title: post.title,
       description: post.description,
       imageUrl: response.secure_url,
+      ingredients: post.ingredients,
+      difficulty: post.difficulty,
     };
 
     const postCreated = await this.postsRepository.create(postCreate, user);
 
     if (!postCreated) return 'Error al crear el post';
+
     return 'post creado con éxito';
   }
 
