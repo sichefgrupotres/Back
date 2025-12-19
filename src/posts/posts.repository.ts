@@ -9,23 +9,14 @@ import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from 'src/users/entities/user.entity';
-import { UploadApiResponse, v2 } from 'cloudinary';
-import bufferToStream from 'buffer-to-stream';
-
-const toStream = bufferToStream;
+import toStream = require('buffer-to-stream')
 
 @Injectable()
 export class PostsRepository {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
-  ) {}
-
-  async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
-    const newPost = this.postsRepository.create({
-      ...post,
-      creator: user,
-    });
+  ) { }
 
   async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
 
