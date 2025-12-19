@@ -42,9 +42,9 @@ export class Post {
 
   @Column({
     type: 'varchar',
-    nullable: true })
+    nullable: true,
+  })
   cloudinaryId?: string;
-
 
   @Column({
     type: 'text',

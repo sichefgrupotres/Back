@@ -5,13 +5,12 @@ import { PostsRepository } from './posts.repository';
 import { User } from 'src/users/entities/user.entity';
 import { UploadImagenClou } from 'src/services/uploadImage';
 
-
-
 @Injectable()
 export class PostsService {
-  constructor(private postsRepository: PostsRepository,
-    private readonly uploadImageClou: UploadImagenClou) { }
-
+  constructor(
+    private postsRepository: PostsRepository,
+    private readonly uploadImageClou: UploadImagenClou,
+  ) {}
 
   async create(
     post: Partial<CreatePostDto>,
@@ -23,7 +22,7 @@ export class PostsService {
     const postCreate = {
       title: post.title,
       description: post.description,
-      imageUrl: response.secure_url
+      imageUrl: response.secure_url,
     };
 
     const postCreated = await this.postsRepository.create(postCreate, user);
