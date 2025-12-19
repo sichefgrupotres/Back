@@ -17,7 +17,7 @@ export class PostsRepository {
     private readonly postsRepository: Repository<Post>,
   ) {}
 
-  async create(post: Partial<CreatePostDto>, user: User): Promise<Post> {
+  async create(post: CreatePostDto, user: User): Promise<Post> {
     const newPost = this.postsRepository.create({
       ...post,
       creator: user,

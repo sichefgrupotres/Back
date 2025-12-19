@@ -48,7 +48,7 @@ export class PostsController {
         description: { type: 'string' },
         difficulty: {
           type: 'string',
-          enum: ['easy', 'medium', 'hard'],
+          enum: ['facil', 'medio', 'dificil'],
         },
         ingredients: { type: 'string' },
         file: {
