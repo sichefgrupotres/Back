@@ -12,6 +12,11 @@ import { UploadImagenClou } from 'src/services/uploadImage';
 @Module({
   imports: [TypeOrmModule.forFeature([Post, User]), AuthModule],
   controllers: [PostsController],
-  providers: [PostsService, PostsRepository, CloudinaryConfig, UploadImagenClou],
+  providers: [
+    PostsService,
+    PostsRepository,
+    CloudinaryConfig,
+    UploadImagenClou,
+  ],
 })
-export class PostsModule { }
+export class PostsModule {}
