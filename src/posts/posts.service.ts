@@ -27,7 +27,10 @@ export class PostsService {
 
     if (!postCreated) return 'Error al crear el post';
 
-    return 'post creado con éxito';
+    return {
+      message: 'post creado con éxito',
+      imageUrl: response.secure_url,
+    };
   }
 
   findAll() {
