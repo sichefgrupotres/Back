@@ -28,6 +28,11 @@ export enum Role {
   CREATOR = 'CREATOR',
 }
 
+export enum AuthProvider {
+  LOCAL = 'local',
+  GOOGLE = 'google',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -36,32 +41,32 @@ export class User {
   @Column({
     type: 'varchar',
     length: 100,
-    nullable: false,
+    nullable: true,
   })
-  name: string;
+  name?: string | null;
 
   @Column({
     type: 'varchar',
     length: 100,
-    nullable: false,
+    nullable: true,
   })
-  lastname: string;
+  lastname?: string | null;
 
   @Column({
     type: 'varchar',
     length: 100,
     unique: true,
-    nullable: false,
+    nullable: true,
   })
   email: string;
 
   @Column({
     type: 'varchar',
-    length: 60,
-    nullable: false,
+    length: 80,
+    nullable: true,
   })
   @Exclude()
-  password: string;
+  password?: string | null;
 
   @Column({
     name: 'roleId',
@@ -70,17 +75,31 @@ export class User {
     nullable: false,
     default: Role.USER,
   })
-  roleId: Role;
+  roleId?: Role;
 
   @Column({
     type: 'enum',
     enum: UserStatus,
     default: UserStatus.ACTIVE,
   })
-  status: UserStatus;
+  status?: UserStatus;
 
   @Column({ name: 'subscription_id', nullable: true })
-  subscriptionId: number;
+  subscriptionId?: number;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    unique: true,
+  })
+  googleId?: string;
+
+  @Column({
+    type: 'enum',
+    enum: AuthProvider,
+    default: AuthProvider.LOCAL,
+  })
+  provider: AuthProvider | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -90,4 +109,5 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.creator)
   posts: [];
+  length: number;
 }

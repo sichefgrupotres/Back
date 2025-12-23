@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -10,20 +11,21 @@ import {
   Validate,
 } from 'class-validator';
 import { MatchPassword } from 'src/decorators/matchPassword.decorators';
-import { Role } from '../entities/user.entity';
+import { AuthProvider, Role } from '../entities/user.entity';
+import { UserStatus } from '../entities/user.entity';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'El nombre es requerido' })
   @Length(3, 100, { message: 'Debe tener una longitud de 3 a 100 caracteres' })
   @IsString()
   @ApiProperty({ example: 'Federico' })
-  name: string;
+  name?: string;
 
   @IsNotEmpty({ message: 'El apellido es requerido' })
   @Length(3, 100, { message: 'Debe tener una longitud de 3 a 100 caracteres' })
   @IsString()
   @ApiProperty({ example: 'Ferrer' })
-  lastname: string;
+  lastname?: string;
 
   @IsEmail()
   @IsNotEmpty({ message: 'El email es requerido' })
@@ -47,12 +49,12 @@ export class CreateUserDto {
     },
   )
   @ApiProperty({ example: 'Federico2025$' })
-  password: string;
+  password?: string | null;
 
   @ApiProperty({ example: 'Federico2025$' })
   @IsNotEmpty()
   @Validate(MatchPassword, ['password'])
-  confirmPassword: string;
+  confirmPassword?: string | null;
 
   @IsOptional()
   @ApiProperty({
@@ -63,4 +65,16 @@ export class CreateUserDto {
   @IsEnum(Role)
   @ApiProperty({ example: Role.USER })
   roleId?: Role;
+
+  @IsOptional()
+  @IsString()
+  googleId?: string;
+
+  @IsOptional()
+  @IsString()
+  provider?: AuthProvider | null;
+
+  @IsOptional()
+  @IsBoolean()
+  status?: UserStatus.ACTIVE;
 }

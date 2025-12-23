@@ -1,10 +1,16 @@
 import { Repository } from 'typeorm';
-import { User, UserStatus } from './entities/user.entity';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import type { DeepPartial } from 'typeorm';
+import { AuthProvider, User, UserStatus } from './entities/user.entity';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { RegisterGoogleDto } from './dto/registerGoogle.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -17,25 +23,45 @@ export class UsersRepository {
     return await this.usersRepository.find();
   }
 
-  async create(user: CreateUserDto): Promise<User> {
-    try {
-      const { password } = user;
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = this.usersRepository.create({
-        ...user,
-        password: hashedPassword,
-        roleId: user.roleId || undefined,
-        status: UserStatus.ACTIVE,
-      });
-      await this.usersRepository.save(newUser);
-      return newUser;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new InternalServerErrorException(error.message);
-      }
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const exists = await this.usersRepository.findOneBy({
+      email: createUserDto.email,
+    });
 
-      throw new InternalServerErrorException('Error inesperado');
+    if (exists) {
+      throw new BadRequestException('El email ya está registrado');
     }
+
+    // Separar confirmPassword y password
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { confirmPassword, password, ...rest } = createUserDto;
+
+    // Hash solo si password existe
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+
+    const user = this.usersRepository.create({
+      ...rest,
+      password: hashedPassword,
+      status: UserStatus.ACTIVE,
+      provider: AuthProvider.LOCAL,
+    });
+
+    return this.usersRepository.save(user);
+  }
+
+  async createGoogleUser(data: RegisterGoogleDto) {
+    const userGoogle: DeepPartial<User> = {
+      email: data.email,
+      name: data.name ?? null,
+      lastname: data.lastname ?? null,
+      googleId: data.googleId,
+      provider: AuthProvider.GOOGLE,
+      status: UserStatus.ACTIVE,
+      password: null,
+    };
+
+    const user = this.usersRepository.create(userGoogle);
+    return await this.usersRepository.save(user);
   }
 
   async findOne(id: string) {
@@ -60,6 +86,11 @@ export class UsersRepository {
 
       throw new InternalServerErrorException('Error inesperado');
     }
+  }
+  async findByGoogleId(googleId: string) {
+    return await this.usersRepository.findOne({
+      where: { googleId },
+    });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
