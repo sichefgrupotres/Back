@@ -35,6 +35,8 @@ import { AuthModule } from './auth/auth.module';
     PostsModule,
 
     AuthModule,
+
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

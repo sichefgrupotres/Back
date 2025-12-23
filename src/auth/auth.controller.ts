@@ -2,11 +2,18 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { RegisterGoogleDto } from 'src/users/dto/registerGoogle.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('register-google')
+  async registerGoogle(@Body() dto: RegisterGoogleDto) {
+    console.log('REGISTER GOOGLE BODY:', dto);
+    return await this.authService.findOrCreateFromGoogle(dto);
+  }
 
   @Post('signin')
   @ApiOperation({
@@ -14,6 +21,12 @@ export class AuthController {
   })
   @Post()
   async signin(@Body() credentials: LoginUserDto) {
-    return this.authService.signinService(credentials);
+    return await this.authService.signinService(credentials);
   }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Post('login-google')
+  // async loginGoogle(@Body('email') email: string) {
+  //   return await this.authService.findOrCreateFromGoogle(email);
+  // }
 }

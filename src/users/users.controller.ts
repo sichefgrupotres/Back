@@ -8,11 +8,13 @@ import {
   Delete,
   ParseUUIDPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -31,6 +33,7 @@ export class UsersController {
     summary: 'Ver todos los usuarios',
   })
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -55,6 +58,7 @@ export class UsersController {
   })
   @ApiBearerAuth()
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
@@ -64,6 +68,7 @@ export class UsersController {
   })
   @ApiBearerAuth()
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -76,6 +81,7 @@ export class UsersController {
   })
   @ApiBearerAuth()
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.remove(id);
   }

@@ -3,6 +3,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/usersResponse.dto';
+import { RegisterGoogleDto } from './dto/registerGoogle.dto';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,10 @@ export class UsersService {
     return foundEmail;
   }
 
+  async findByGoogleId(googleId: string) {
+    return this.usersRepository.findOne(googleId);
+  }
+
   findAll() {
     return this.usersRepository.findAll();
   }
@@ -35,7 +40,7 @@ export class UsersService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserResponseDto> {
+  ): Promise<Partial<UserResponseDto> | undefined> {
     await this.usersRepository.update(id, updateUserDto);
     const user = await this.usersRepository.findOne(id);
 
@@ -43,14 +48,26 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
+    if (updateUserDto.name !== undefined) {
+      user.name = updateUserDto.name;
+    }
+
+    if (updateUserDto.lastname !== undefined) {
+      user.lastname = updateUserDto.lastname;
+    }
+
     return {
       id: user.id,
-      nombre: user.name,
-      apellido: user.lastname,
+      name: user.name ?? undefined,
+      lastname: user.lastname ?? undefined,
       email: user.email,
     };
   }
   remove(id: string) {
     return `This action removes a #${id} user`;
+  }
+
+  async createGoogleUser(data: RegisterGoogleDto) {
+    return await this.usersRepository.createGoogleUser(data);
   }
 }
