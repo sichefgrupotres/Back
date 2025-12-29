@@ -4,6 +4,9 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
 import { User } from 'src/users/entities/user.entity';
 import { UploadImagenClou } from 'src/services/uploadImage';
+import { FilterPostDto } from './dto/filter-post.dto';
+import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
+import { PostResponseDto } from './dto/post-response.dto';
 
 @Injectable()
 export class PostsService {
@@ -33,8 +36,23 @@ export class PostsService {
     };
   }
 
-  findAll() {
-    return this.postsRepository.findAll();
+  async findAll(
+    filters: FilterPostDto,
+  ): Promise<PaginatedResponse<PostResponseDto>> {
+    const result = await this.postsRepository.findAll(filters);
+
+    return {
+      data: result.data.map((post) => ({
+        title: post.title,
+        description: post.description,
+        ingredients: post.ingredients,
+        difficulty: post.difficulty,
+        imageUrl: post.imageUrl,
+        createdAt: post.createdAt,
+        creatorName: `${post.creator.name} ${post.creator.lastname}`,
+      })),
+      meta: result.meta,
+    };
   }
 
   findOne(id: string) {

@@ -14,6 +14,7 @@ import {
   FileTypeValidator,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -22,13 +23,18 @@ import { User } from 'src/users/entities/user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FilterPostDto } from './dto/filter-post.dto';
+import { PaginatedPostResponseDto } from './dto/paginated-post-response.dto';
+import { ErrorResponseDto } from './dto/error-response.dto';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -86,9 +92,17 @@ export class PostsController {
     summary: 'Ver todos los posteos',
   })
   @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Listado paginado de posteos',
+    type: PaginatedPostResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Parámetros de búsqueda inválidos',
+    type: ErrorResponseDto,
+  })
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(@Query() filters: FilterPostDto) {
+    return this.postsService.findAll(filters);
   }
 
   @ApiOperation({
