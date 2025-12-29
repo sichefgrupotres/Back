@@ -14,4 +14,8 @@ export class RegisterGoogleDto {
 
   @IsString()
   googleId: string;
+
+  @IsOptional()
+  @IsString()
+  roleId?: string;
 }

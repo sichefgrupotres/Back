@@ -5,7 +5,12 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterGoogleDto } from 'src/users/dto/registerGoogle.dto';
 import { Repository } from 'typeorm';
-import { AuthProvider, User, UserStatus } from 'src/users/entities/user.entity';
+import {
+  AuthProvider,
+  Role,
+  User,
+  UserStatus,
+} from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 // import { AuthProvider, UserStatus } from 'src/users/entities/user.entity';
 
@@ -80,6 +85,7 @@ export class AuthService {
       name: dto.name ?? null,
       lastname: dto.lastname ?? null,
       googleId: dto.googleId,
+      roleId: (dto.roleId as Role) || Role.USER,
       provider: AuthProvider.GOOGLE,
       status: UserStatus.ACTIVE,
       password: null,
