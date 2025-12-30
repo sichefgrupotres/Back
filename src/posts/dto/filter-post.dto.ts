@@ -9,6 +9,7 @@ import {
   IsInt,
   Min,
   Max,
+  Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
@@ -38,11 +39,15 @@ export class FilterPostDto {
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })
-  @MaxLength(100)
+  @MaxLength(30)
+  @Matches(/^\S+(?:\s+\S+)?$/, {
+    message: 'creatorName debe tener máximo dos palabras',
+  })
   @ApiProperty({
     required: false,
     example: 'Juan',
-    description: 'Filtrar recetas por nombre o apellido del creador',
+    description:
+      'Filtrar recetas por nombre o apellido del creador (máximo dos palabras)',
   })
   creatorName?: string;
 

@@ -46,13 +46,16 @@ export class PostsRepository {
 
     let startDate: Date | undefined;
     let endDate: Date | undefined;
-    if (fromDate && toDate) {
-      const startDate = parseLocalDate(fromDate);
-      const endDate = parseLocalDate(toDate, true);
+    if (fromDate) {
+      startDate = parseLocalDate(fromDate);
+    }
+    //true para asegurar que considere todo el día hasta 23:59
+    if (toDate) {
+      endDate = parseLocalDate(toDate, true);
+    }
 
-      if (startDate > endDate) {
-        throw new BadRequestException('fromDate no puede ser mayor que toDate');
-      }
+    if (startDate && endDate && startDate > endDate) {
+      throw new BadRequestException('fromDate no puede ser mayor que toDate');
     }
 
     const query = this.postsRepository
@@ -70,12 +73,12 @@ export class PostsRepository {
         toDate: endDate,
       });
     }
-    if (search) {
+    if (search?.trim()) {
       query.andWhere(
         `(post.title ILIKE :search 
         OR post.description ILIKE :search 
         OR post.ingredients ILIKE :search)`,
-        { search: `%${search}%` },
+        { search: `%${search.trim()}%` },
       );
     }
     if (difficulty) {
