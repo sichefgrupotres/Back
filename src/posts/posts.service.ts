@@ -24,6 +24,7 @@ export class PostsService {
       imageUrl: response.secure_url,
       ingredients: post.ingredients,
       difficulty: post.difficulty,
+      isPremium: post.isPremium,
     };
 
     const postCreated = await this.postsRepository.create(postCreate, user);
