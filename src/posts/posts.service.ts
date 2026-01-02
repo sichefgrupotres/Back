@@ -44,10 +44,12 @@ export class PostsService {
 
     return {
       data: result.data.map((post) => ({
+        id: post.id,
         title: post.title,
         description: post.description,
         ingredients: post.ingredients,
         difficulty: post.difficulty,
+        isPremium: post.isPremium,
         imageUrl: post.imageUrl,
         createdAt: post.createdAt,
         creatorName: `${post.creator.name} ${post.creator.lastname}`,

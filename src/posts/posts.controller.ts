@@ -110,7 +110,7 @@ export class PostsController {
   })
   @ApiBearerAuth()
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.postsService.findOne(id);
   }
 
