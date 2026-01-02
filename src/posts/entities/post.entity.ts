@@ -28,8 +28,7 @@ export class Post {
   title: string;
 
   @Column({
-    type: 'varchar',
-    length: 100,
+    type: 'text',
     nullable: false,
   })
   description: string;
