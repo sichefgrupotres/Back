@@ -24,6 +24,7 @@ export class PostsService {
       imageUrl: response.secure_url,
       ingredients: post.ingredients,
       difficulty: post.difficulty,
+      category: post.category,
       isPremium: post.isPremium,
     };
 
@@ -49,6 +50,7 @@ export class PostsService {
         description: post.description,
         ingredients: post.ingredients,
         difficulty: post.difficulty,
+        category: post.category,
         isPremium: post.isPremium,
         imageUrl: post.imageUrl,
         createdAt: post.createdAt,

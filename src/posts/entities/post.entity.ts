@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PostCategory } from '../enums/post-category.enum';
 
 export enum Difficulty {
   facil = 'facil',
@@ -65,6 +66,12 @@ export class Post {
     default: Difficulty.facil,
   })
   difficulty: Difficulty;
+
+  @Column({
+    type: 'enum',
+    enum: PostCategory,
+  })
+  category: PostCategory;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

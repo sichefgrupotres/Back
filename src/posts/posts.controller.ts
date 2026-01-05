@@ -56,13 +56,24 @@ export class PostsController {
           type: 'string',
           enum: ['facil', 'medio', 'dificil'],
         },
+        category: {
+          type: 'string',
+          enum: ['desayunos', 'almuerzos', 'meriendas', 'cenas', 'postres'],
+        },
         ingredients: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',
         },
       },
-      required: ['title', 'description', 'difficulty', 'ingredients', 'file'],
+      required: [
+        'title',
+        'description',
+        'difficulty',
+        'category',
+        'ingredients',
+        'file',
+      ],
     },
   })
   @UseGuards(AuthGuard)
