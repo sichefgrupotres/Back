@@ -6,7 +6,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  // IsUrl,
+  IsUrl,
   MaxLength,
 } from 'class-validator';
 
@@ -33,10 +33,10 @@ export class CreatePostDto {
   @ApiProperty({ example: 'Ingredientes de mi receta' })
   ingredients: string;
 
-  // @IsOptional()
-  // @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
-  // @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
-  // imagen?: string;
+  @IsOptional()
+  @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
+  @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
+  imagen?: string;
 
   @IsOptional()
   @ApiProperty({

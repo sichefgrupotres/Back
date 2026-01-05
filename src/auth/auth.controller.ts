@@ -10,6 +10,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register-google')
+  @ApiOperation({
+    summary: 'Inicio de sesion externa',
+  })
   async registerGoogle(@Body() dto: RegisterGoogleDto) {
     console.log('REGISTER GOOGLE BODY:', dto);
     return await this.authService.findOrCreateFromGoogle(dto);

@@ -97,4 +97,8 @@ export class UsersRepository {
     const userUpdated = await this.usersRepository.update(id, updateUserDto);
     return userUpdated;
   }
+
+  async findBy(id: string) {
+    return this.usersRepository.findBy(id);
+  }
 }
