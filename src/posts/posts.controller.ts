@@ -75,8 +75,8 @@ export class PostsController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
-            maxSize: 200000,
-            message: 'Supera el peso maximo de 200kb',
+            maxSize: 2000000,
+            message: 'Supera el peso maximo de 2000kb',
           }),
           new FileTypeValidator({ fileType: /^image\/.*/ }),
         ],

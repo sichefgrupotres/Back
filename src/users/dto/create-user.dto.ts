@@ -77,4 +77,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   status?: UserStatus.ACTIVE;
+
+  @IsOptional()
+  @IsBoolean()
+  blocked?: boolean;
 }
