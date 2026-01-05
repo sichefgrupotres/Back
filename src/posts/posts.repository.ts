@@ -42,6 +42,7 @@ export class PostsRepository {
       orderByDate,
       page,
       limit,
+      category,
     } = filters;
 
     let startDate: Date | undefined;
@@ -83,6 +84,10 @@ export class PostsRepository {
     }
     if (difficulty) {
       query.andWhere('post.difficulty = :difficulty', { difficulty });
+    }
+
+    if (category) {
+      query.andWhere('post.category = :category', { category });
     }
 
     if (creatorName) {

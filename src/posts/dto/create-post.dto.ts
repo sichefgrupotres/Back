@@ -9,6 +9,7 @@ import {
   IsUrl,
   MaxLength,
 } from 'class-validator';
+import { PostCategory } from '../enums/post-category.enum';
 
 export enum Difficulty {
   facil = 'facil',
@@ -55,4 +56,12 @@ export class CreatePostDto {
     description: 'Filtrar recetas premium o no premium',
   })
   isPremium?: boolean;
+
+  @IsOptional()
+  @IsEnum(PostCategory)
+  @ApiProperty({
+    example: 'Almuerzo',
+    description: 'Categoria de la receta',
+  })
+  category?: PostCategory;
 }

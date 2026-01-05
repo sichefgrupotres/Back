@@ -13,6 +13,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
+import { PostCategory } from '../enums/post-category.enum';
 
 export class FilterPostDto {
   //Búsqueda global (title, description, ingredients)
@@ -36,6 +37,15 @@ export class FilterPostDto {
     description: 'Filtrar recetas por nivel de dificultad',
   })
   difficulty?: Difficulty;
+
+  @IsOptional()
+  @IsEnum(PostCategory)
+  @ApiProperty({
+    required: false,
+    example: 'Almuerzo',
+    description: 'Categoria de la receta',
+  })
+  category?: PostCategory;
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })
