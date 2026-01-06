@@ -6,12 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
-<<<<<<< HEAD
 import { UsersService } from './users/users.service';
 import { PostsService } from './posts/posts.service';
-=======
+
 import { AdminModule } from './admin/admin.module';
->>>>>>> dev
 
 @Module({
   imports: [
@@ -39,8 +37,6 @@ import { AdminModule } from './admin/admin.module';
     UsersModule,
 
     PostsModule,
-
-    AuthModule,
 
     AuthModule,
 
