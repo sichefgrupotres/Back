@@ -4,7 +4,7 @@ import {
   Param,
   Patch,
   Body,
-  UseGuards,
+  // UseGuards,
   Query,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';

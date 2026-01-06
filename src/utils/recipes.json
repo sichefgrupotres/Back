@@ -8,7 +8,7 @@
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767032102/ui6j6atnps7dfhupisha.jpg",
     "creatorSeedKey": "admin",
-    "category": "almuerzos"
+    "category": "Almuerzos"
   },
   {
     "seedKey": "post_paella_mariscos",
@@ -19,7 +19,7 @@
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767121016/hzoaajqa2e6vnz3m3n7y.jpg",
     "creatorSeedKey": "creator_yeison",
-    "category": "cenas"
+    "category": "Cenas"
   },
   {
     "seedKey": "post_Fetuccini_a_la_carbonara",
@@ -30,7 +30,7 @@
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767555251/fetuccini_wsmaco.jpg",
     "creatorSeedKey": "creator_pablo",
-    "category": "meriendas"
+    "category": "Meriendas"
   },
   {
     "seedKey": "post__creme_brulee",
@@ -41,7 +41,7 @@
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767551431/Creme-Brulee_n29abp.jpg",
     "creatorSeedKey": "creator_maxi",
-    "category": "desayunos"
+    "category": "Desayunos"
   },
   {
     "seedKey": "post_ensalada_cesar",
@@ -52,7 +52,7 @@
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767554122/ensalada-cesar-_jronwg.jpg",
     "creatorSeedKey": "creator_orlando",
-    "category": "cenas"
+    "category": "Cenas"
   },
   {
     "seedKey": "post_bondiola_braseada",
@@ -63,6 +63,6 @@
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767096225/bjigdgmee1u5v0fubuds.jpg",
     "creatorSeedKey": "creator_caro",
-    "category": "postres"
+    "category": "Postres"
   }
 ]
