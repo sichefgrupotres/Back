@@ -7,7 +7,8 @@
     "difficulty": "medio",
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767032102/ui6j6atnps7dfhupisha.jpg",
-    "creatorSeedKey": "admin"
+    "creatorSeedKey": "admin",
+    "category": "almuerzos"
   },
   {
     "seedKey": "post_paella_mariscos",
@@ -17,9 +18,10 @@
     "difficulty": "dificil",
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767121016/hzoaajqa2e6vnz3m3n7y.jpg",
-    "creatorSeedKey": "creator_yeison"
+    "creatorSeedKey": "creator_yeison",
+    "category": "cenas"
   },
-   {
+  {
     "seedKey": "post_Fetuccini_a_la_carbonara",
     "title": "Fetuccini a la carbonara",
     "description": "Fettuccine es como denominan en Roma a los tallarines. El nombre de esta pasta deriva de la palabra “fettuccia”, que significa cinta.\nPreparación paso a paso\nPaso 1: Para la masa, mezclar los ingredientes en un bol y amasar. Estirar y cortar. Hervir en agua y sal.\nPaso 2: En una sartén con aceite de oliva saltear la panceta cortada en tiras finas. Una vez que se haya desgrasado la panceta, agregar el ajo.\nPaso 3: Incorporar el vino blanco y dejar evaporar el alcohol.\nPaso 4: Luego agregar la pasta y saltearla unos minutos para que se impregne de los sabores y se termine de cocinar.\nPaso 5: En un bol aparte mezclar las yemas de huevo con el queso y la crema de leche. Volcar toda la mezcla en la sartén donde están los Fettuccine. Saltear para incorporar bien.\nPaso 6:Agregar abundante perejil picado.",
@@ -27,7 +29,8 @@
     "difficulty": "medio",
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767555251/fetuccini_wsmaco.jpg",
-    "creatorSeedKey": "creator_pablo"
+    "creatorSeedKey": "creator_pablo",
+    "category": "meriendas"
   },
   {
     "seedKey": "post__creme_brulee",
@@ -37,7 +40,8 @@
     "difficulty": "facil",
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767551431/Creme-Brulee_n29abp.jpg",
-    "creatorSeedKey": "creator_maxi"
+    "creatorSeedKey": "creator_maxi",
+    "category": "desayunos"
   },
   {
     "seedKey": "post_ensalada_cesar",
@@ -47,7 +51,8 @@
     "difficulty": "facil",
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767554122/ensalada-cesar-_jronwg.jpg",
-    "creatorSeedKey": "creator_orlando"
+    "creatorSeedKey": "creator_orlando",
+    "category": "cenas"
   },
   {
     "seedKey": "post_bondiola_braseada",
@@ -57,6 +62,7 @@
     "difficulty": "medio",
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767096225/bjigdgmee1u5v0fubuds.jpg",
-    "creatorSeedKey": "creator_caro"
+    "creatorSeedKey": "creator_caro",
+    "category": "postres"
   }
 ]
