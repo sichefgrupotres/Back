@@ -15,6 +15,12 @@ export class PostResponseDto {
   difficulty: Difficulty;
 
   @ApiProperty({
+    description: 'Indica si el post es premium',
+    example: false,
+  })
+  isPremium: boolean;
+
+  @ApiProperty({
     description: 'Nombre del creador del post',
     example: 'Federico Ferrer',
   })

@@ -57,12 +57,23 @@ export class PostsController {
           enum: ['facil', 'medio', 'dificil'],
         },
         ingredients: { type: 'string' },
+        isPremium: {
+          type: 'boolean',
+          example: false,
+        },
         file: {
           type: 'string',
           format: 'binary',
         },
       },
-      required: ['title', 'description', 'difficulty', 'ingredients', 'file'],
+      required: [
+        'title',
+        'description',
+        'difficulty',
+        'ingredients',
+        'isPremium',
+        'file',
+      ],
     },
   })
   @UseGuards(AuthGuard)
@@ -100,9 +111,19 @@ export class PostsController {
     description: 'Parámetros de búsqueda inválidos',
     type: ErrorResponseDto,
   })
+  @UseGuards(AuthGuard)
   @Get()
   findAll(@Query() filters: FilterPostDto) {
     return this.postsService.findAll(filters);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Seed de posts (solo desarrollo)' })
+  @ApiOkResponse({ description: 'Seed de posts realizado' })
+  @UseGuards(AuthGuard)
+  @Get('seeder')
+  seedPosts(): Promise<{ message: string }> {
+    return this.postsService.addPosts();
   }
 
   @ApiOperation({
@@ -118,6 +139,7 @@ export class PostsController {
     summary: 'Actualizar un posteo',
   })
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -130,6 +152,7 @@ export class PostsController {
     summary: 'Eliminar un posteo',
   })
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.postsService.remove(id);

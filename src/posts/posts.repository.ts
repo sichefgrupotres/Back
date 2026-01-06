@@ -12,12 +12,16 @@ import { User } from 'src/users/entities/user.entity';
 import { FilterPostDto } from './dto/filter-post.dto';
 import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
 import { parseLocalDate } from 'src/utils/date.utils';
+import postsData from '../utils/recipes.json';
+import { PostSeed } from './posts.seed.type';
 
 @Injectable()
 export class PostsRepository {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
   ) {}
 
   async create(post: CreatePostDto, user: User): Promise<Post> {
@@ -42,6 +46,7 @@ export class PostsRepository {
       orderByDate,
       page,
       limit,
+      isPremium,
     } = filters;
 
     let startDate: Date | undefined;
@@ -85,6 +90,10 @@ export class PostsRepository {
       query.andWhere('post.difficulty = :difficulty', { difficulty });
     }
 
+    if (isPremium !== undefined) {
+      query.andWhere('post.isPremium = :isPremium', { isPremium });
+    }
+
     if (creatorName) {
       const parts = creatorName.trim().split(/\s+/);
 
@@ -123,6 +132,57 @@ export class PostsRepository {
         totalPages: Math.ceil(total / pageSize),
       },
     };
+  }
+
+  async addPosts(): Promise<{ message: string }> {
+    const users = await this.usersRepository.find();
+
+    const typedPostsData = postsData as PostSeed[];
+    await Promise.all(
+      typedPostsData.map(async (postData) => {
+        const creator = users.find(
+          (user) => user.seedKey === postData.creatorSeedKey,
+        );
+
+        if (!creator) {
+          throw new NotFoundException(
+            `El usuario ${postData.creatorSeedKey} no existe`,
+          );
+        }
+
+        const post = this.postsRepository.create({
+          seedKey: postData.seedKey,
+          title: postData.title,
+          description: postData.description,
+          ingredients: postData.ingredients,
+          difficulty: postData.difficulty,
+          isPremium: postData.isPremium,
+          imageUrl: postData.imageUrl,
+          creator,
+        });
+
+        await this.postsRepository
+          .createQueryBuilder()
+          .insert()
+          .into(Post)
+          .values(post)
+          .onConflict(
+            `
+          ("seedKey")
+          DO UPDATE SET
+            description = EXCLUDED.description,
+            ingredients = EXCLUDED.ingredients,
+            difficulty = EXCLUDED.difficulty,
+            "isPremium" = EXCLUDED."isPremium",
+            "imageUrl" = EXCLUDED."imageUrl",
+            "updated_at" = DEFAULT
+        `,
+          )
+          .execute();
+      }),
+    );
+
+    return { message: 'Posts agregados' };
   }
 
   async findOne(id: string) {

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
+
 import {
   IsBoolean,
   IsEnum,
@@ -52,7 +53,7 @@ export class CreatePostDto {
   @Transform(({ value }) => value === 'true')
   @ApiProperty({
     example: 'false',
-    description: 'Filtrar recetas premium o no premium',
+    description: 'Indica si el post es premium',
   })
   isPremium?: boolean;
 }

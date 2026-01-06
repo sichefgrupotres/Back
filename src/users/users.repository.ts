@@ -11,6 +11,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterGoogleDto } from './dto/registerGoogle.dto';
+import usersData from '../utils/users.json';
+import { UserSeed } from './user-seed.type';
 
 @Injectable()
 export class UsersRepository {
@@ -47,6 +49,34 @@ export class UsersRepository {
     });
 
     return this.usersRepository.save(user);
+  }
+
+  async addUsers(): Promise<{ message: string }> {
+    const users = usersData as UserSeed[];
+
+    await Promise.all(
+      users.map(async (userData) => {
+        const user = this.usersRepository.create({
+          name: userData.name,
+          lastname: userData.lastname,
+          email: userData.email,
+          password: await bcrypt.hash(userData.password, 10),
+          roleId: userData.roleId,
+          provider: userData.provider,
+          seedKey: userData.seedKey,
+          status: UserStatus.ACTIVE,
+        });
+        await this.usersRepository
+          .createQueryBuilder()
+          .insert()
+          .into(User)
+          .values(user)
+          .orIgnore()
+          .execute();
+      }),
+    );
+
+    return { message: 'Usuarios agregados' };
   }
 
   async createGoogleUser(data: RegisterGoogleDto) {

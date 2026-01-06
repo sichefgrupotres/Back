@@ -66,6 +66,14 @@ export class Post {
   })
   difficulty: Difficulty;
 
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+    unique: true,
+  })
+  seedKey?: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

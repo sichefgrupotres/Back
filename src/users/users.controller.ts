@@ -53,6 +53,14 @@ export class UsersController {
     return this.usersService.findOne(email);
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Seed de usuarios' })
+  @UseGuards(JwtAuthGuard)
+  @Get('seeder')
+  seedUsers(): Promise<{ message: string }> {
+    return this.usersService.addUsers();
+  }
+
   @ApiOperation({
     summary: 'Buscar a un usuario por su Id',
   })

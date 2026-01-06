@@ -95,6 +95,14 @@ export class User {
   googleId?: string;
 
   @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+    unique: true,
+  })
+  seedKey?: string;
+
+  @Column({
     type: 'enum',
     enum: AuthProvider,
     default: AuthProvider.LOCAL,
