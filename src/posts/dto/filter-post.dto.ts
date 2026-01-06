@@ -52,7 +52,7 @@ export class FilterPostDto {
   @IsEnum(PostCategory)
   @ApiProperty({
     required: false,
-    example: 'Almuerzo',
+    example: 'Almuerzos',
     description: 'Categoria de la receta',
   })
   category?: PostCategory;
