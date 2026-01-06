@@ -46,7 +46,7 @@ export class AuthService {
       id: foundUser.id,
       name: foundUser.name,
       email: foundUser.email,
-      rol: foundUser.roleId,
+      role: foundUser.roleId,
     };
 
     const token = this.jwtService.sign(payload);
@@ -61,36 +61,45 @@ export class AuthService {
       where: { googleId: dto.googleId },
     });
 
-    if (user) {
-      return user;
+    if (!user) {
+      user = await this.usersRepository.findOne({
+        where: { email: dto.email },
+      });
+
+      if (user && !user.googleId) {
+        user.googleId = dto.googleId;
+        user.provider = AuthProvider.GOOGLE;
+        await this.usersRepository.save(user);
+      }
+
+      if (!user) {
+        user = this.usersRepository.create({
+          email: dto.email,
+          name: dto.name ?? null,
+          lastname: dto.lastname ?? null,
+          googleId: dto.googleId,
+          roleId: (dto.roleId as Role) || Role.USER,
+          provider: AuthProvider.GOOGLE,
+          status: UserStatus.ACTIVE,
+          password: null,
+        });
+
+        await this.usersRepository.save(user);
+      }
     }
 
-    user = await this.usersRepository.findOne({
-      where: { email: dto.email },
-    });
+    // 🔐 FIRMA JWT (CLAVE)
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.roleId,
+    };
 
-    if (user && !user.googleId) {
-      user.googleId = dto.googleId;
-      user.provider = AuthProvider.GOOGLE;
+    const token = this.jwtService.sign(payload);
 
-      return await this.usersRepository.save(user);
-    }
-
-    if (user) {
-      return user;
-    }
-
-    const newUser = this.usersRepository.create({
-      email: dto.email,
-      name: dto.name ?? null,
-      lastname: dto.lastname ?? null,
-      googleId: dto.googleId,
-      roleId: (dto.roleId as Role) || Role.USER,
-      provider: AuthProvider.GOOGLE,
-      status: UserStatus.ACTIVE,
-      password: null,
-    });
-
-    return await this.usersRepository.save(newUser);
+    return {
+      user,
+      token,
+    };
   }
 }

@@ -56,6 +56,10 @@ export class PostsController {
           type: 'string',
           enum: ['facil', 'medio', 'dificil'],
         },
+        category: {
+          type: 'string',
+          enum: ['desayunos', 'almuerzos', 'meriendas', 'cenas', 'postres'],
+        },
         ingredients: { type: 'string' },
         isPremium: {
           type: 'boolean',
@@ -70,8 +74,13 @@ export class PostsController {
         'title',
         'description',
         'difficulty',
+<<<<<<< HEAD
         'ingredients',
         'isPremium',
+=======
+        'category',
+        'ingredients',
+>>>>>>> dev
         'file',
       ],
     },
@@ -86,8 +95,8 @@ export class PostsController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
-            maxSize: 200000,
-            message: 'Supera el peso maximo de 200kb',
+            maxSize: 2000000,
+            message: 'Supera el peso maximo de 2000kb',
           }),
           new FileTypeValidator({ fileType: /^image\/.*/ }),
         ],

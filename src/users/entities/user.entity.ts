@@ -109,6 +109,11 @@ export class User {
   })
   provider: AuthProvider | null;
 
+  @Column({
+    default: false,
+  })
+  blocked: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

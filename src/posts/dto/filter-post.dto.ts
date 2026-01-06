@@ -14,6 +14,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
+import { PostCategory } from '../enums/post-category.enum';
 
 export class FilterPostDto {
   //Búsqueda global (title, description, ingredients)
@@ -39,6 +40,7 @@ export class FilterPostDto {
   difficulty?: Difficulty;
 
   @IsOptional()
+<<<<<<< HEAD
   @IsBoolean({ message: 'isPremium debe ser true o false' })
   @Transform(({ value }) => value === 'true')
   @ApiProperty({
@@ -47,6 +49,15 @@ export class FilterPostDto {
     description: 'Filtrar recetas premium o no premium',
   })
   isPremium?: boolean;
+=======
+  @IsEnum(PostCategory)
+  @ApiProperty({
+    required: false,
+    example: 'Almuerzo',
+    description: 'Categoria de la receta',
+  })
+  category?: PostCategory;
+>>>>>>> dev
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })

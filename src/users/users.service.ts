@@ -7,6 +7,7 @@ import { RegisterGoogleDto } from './dto/registerGoogle.dto';
 
 @Injectable()
 export class UsersService {
+  usersService: any;
   constructor(private usersRepository: UsersRepository) {}
 
   async create(user: CreateUserDto) {
@@ -31,6 +32,12 @@ export class UsersService {
 
   async findByGoogleId(googleId: string) {
     return this.usersRepository.findOne(googleId);
+  }
+
+  async getUserById(id: string) {
+    const user = await this.usersRepository.findBy(id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
   findAll() {
@@ -67,6 +74,7 @@ export class UsersService {
       email: user.email,
     };
   }
+
   remove(id: string) {
     return `This action removes a #${id} user`;
   }

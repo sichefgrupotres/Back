@@ -7,9 +7,10 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  // IsUrl,
+  IsUrl,
   MaxLength,
 } from 'class-validator';
+import { PostCategory } from '../enums/post-category.enum';
 
 export enum Difficulty {
   facil = 'facil',
@@ -34,10 +35,10 @@ export class CreatePostDto {
   @ApiProperty({ example: 'Ingredientes de mi receta' })
   ingredients: string;
 
-  // @IsOptional()
-  // @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
-  // @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
-  // imagen?: string;
+  @IsOptional()
+  @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
+  @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
+  imagen?: string;
 
   @IsOptional()
   @ApiProperty({
@@ -56,4 +57,12 @@ export class CreatePostDto {
     description: 'Indica si el post es premium',
   })
   isPremium?: boolean;
+
+  @IsOptional()
+  @IsEnum(PostCategory)
+  @ApiProperty({
+    example: 'Almuerzo',
+    description: 'Categoria de la receta',
+  })
+  category?: PostCategory;
 }
