@@ -74,13 +74,9 @@ export class PostsController {
         'title',
         'description',
         'difficulty',
-<<<<<<< HEAD
         'ingredients',
         'isPremium',
-=======
         'category',
-        'ingredients',
->>>>>>> dev
         'file',
       ],
     },
