@@ -58,7 +58,7 @@ export class PostsController {
         },
         category: {
           type: 'string',
-          enum: ['desayunos', 'almuerzos', 'meriendas', 'cenas', 'postres'],
+          enum: ['Desayunos', 'Almuerzos', 'Meriendas', 'Cenas', 'Postres'],
         },
         ingredients: { type: 'string' },
         isPremium: {

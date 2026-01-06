@@ -50,6 +50,14 @@ export class CreatePostDto {
   difficulty: Difficulty;
 
   @IsOptional()
+  @IsEnum(PostCategory)
+  @ApiProperty({
+    example: 'Almuerzos',
+    description: 'Categoria de la receta',
+  })
+  category?: PostCategory;
+
+  @IsOptional()
   @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
   @Transform(({ value }) => value === 'true')
   @ApiProperty({
@@ -57,12 +65,4 @@ export class CreatePostDto {
     description: 'Indica si el post es premium',
   })
   isPremium?: boolean;
-
-  @IsOptional()
-  @IsEnum(PostCategory)
-  @ApiProperty({
-    example: 'Almuerzo',
-    description: 'Categoria de la receta',
-  })
-  category?: PostCategory;
 }
