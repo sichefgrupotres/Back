@@ -1,4 +1,5 @@
 import { Difficulty } from './entities/post.entity';
+import { PostCategory } from './enums/post-category.enum';
 
 export type PostSeed = {
   seedKey: string;
@@ -8,5 +9,6 @@ export type PostSeed = {
   difficulty: Difficulty;
   isPremium: boolean;
   imageUrl: string;
+  category: PostCategory;
   creatorSeedKey: string;
 };

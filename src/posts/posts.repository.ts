@@ -162,6 +162,7 @@ export class PostsRepository {
           difficulty: postData.difficulty,
           isPremium: postData.isPremium,
           imageUrl: postData.imageUrl,
+          category: postData.category,
           creator,
         });
 

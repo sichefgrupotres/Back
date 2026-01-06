@@ -74,8 +74,11 @@ export class Post {
     unique: true,
   })
   seedKey?: string;
-  type = 'enum';
-  enum: PostCategory;
+
+  @Column({
+    type: 'enum',
+    enum: PostCategory,
+  })
   category: PostCategory;
 
   @CreateDateColumn({ name: 'created_at' })
