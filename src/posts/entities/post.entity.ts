@@ -74,7 +74,6 @@ export class Post {
     unique: true,
   })
   seedKey?: string;
-
   @Column({
     type: 'enum',
     enum: PostCategory,

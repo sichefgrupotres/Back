@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Difficulty } from '../entities/post.entity';
+import { PostCategory } from '../enums/post-category.enum';
 
 export class PostResponseDto {
   @ApiProperty()
@@ -31,4 +32,7 @@ export class PostResponseDto {
 
   @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty({ enum: PostCategory })
+  category: PostCategory;
 }

@@ -39,7 +39,7 @@ import { ErrorResponseDto } from './dto/error-response.dto';
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postsService: PostsService) { }
 
   @ApiOperation({
     summary: 'Creacion de un posteo',
@@ -77,6 +77,7 @@ export class PostsController {
         'ingredients',
         'isPremium',
         'category',
+        'ingredients',
         'file',
       ],
     },
@@ -92,7 +93,7 @@ export class PostsController {
         validators: [
           new MaxFileSizeValidator({
             maxSize: 2000000,
-            message: 'Supera el peso maximo de 2000kb',
+            message: 'Supera el peso maximo de 50000kb',
           }),
           new FileTypeValidator({ fileType: /^image\/.*/ }),
         ],
