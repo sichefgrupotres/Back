@@ -18,5 +18,6 @@ import { UploadImagenClou } from 'src/services/uploadImage';
     CloudinaryConfig,
     UploadImagenClou,
   ],
+  exports: [PostsService],
 })
 export class PostsModule {}

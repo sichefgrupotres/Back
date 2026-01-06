@@ -60,6 +60,10 @@ export class PostsService {
     };
   }
 
+  async addPosts(): Promise<{ message: string }> {
+    return await this.postsRepository.addPosts();
+  }
+
   findOne(id: string) {
     return this.postsRepository.findOne(id);
   }

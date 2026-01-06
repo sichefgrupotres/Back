@@ -1,0 +1,62 @@
+[
+  {
+    "seedKey": "post_locro_tradicional",
+    "title": "Locro tradicional",
+    "description": "El locro es uno de los platos más emblemáticos de la gastronomía argentina. Esta receta, que combina sabores y tradiciones.\nPreparación paso a paso\nPaso 1: Colocá los porotos en un recipiente con agua y dejalos en remojo durante al menos 8 horas.\nPaso 2: En una olla grande, poné a hervir agua y agregá las carnes.Cociná a fuego medio durante aproximadamente 1 hora. Una vez que estén tiernas, cortalas en trozos pequeños.\nPaso 3: En la misma olla, agregá un chorrito de aceite y sofreí la cebolla, el ajo y el pimiento rojo picados. Añadí zanahorias cortadas en rodajas. Cociná hasta que las verduras estén tiernas.\nPaso 4: Sumá a la olla el maíz, los porotos escurridos y las carnes cortadas. Agregá agua suficiente para cubrir los ingredientes. Condimenta con sal, pimienta, comino y pimentón. \nPaso 5: Cocinar a fuego lento durante aproximadamente 2 horas. \nPaso 6: Una vez listo, servilo caliente en platos hondos. Podés acompañarlo con chimichurri o ají, según tu gusto.",
+    "ingredients": "500 g de carne de cerdo, 500 g de carne de res, 250 g de chorizo colorado, 250 g de porotos blancos, 2 tazas de maíz, 2 zanahorias, 1 cebolla grande, 1 pimiento rojo, Sal y pimienta al gusto",
+    "difficulty": "medio",
+    "isPremium": false,
+    "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767032102/ui6j6atnps7dfhupisha.jpg",
+    "creatorSeedKey": "admin"
+  },
+  {
+    "seedKey": "post_paella_mariscos",
+    "title": "Paella tradicional de mariscos",
+    "description": "La paella es un símbolo de la cultura gastronómica de toda España, con el arroz amarillo como la base de todo lo que está bien. Es bien fácil y deliciosa.\nPreparación paso a paso\nPaso 1: Picar la cebolla, el ajo y los morrones en cubitos bien pequeños.\nPaso 2: Cocinar las cebollas y los morrones picados, con un poquito de aceite hasta que las verduras se ablanden. Reservar.\nPaso 3: Cortar los calamares en anillos de 1 cm de espesor y añadirlos a la paellera.\nPaso 4: Cocinarlos por unos 5 minutos. Agregar el vino y los tomates, cortados en cubos.\nPaso 5: Cocinar todo a fuego bajo por unos 20 minutos y recién pasado ese tiempo, agregar el arroz. Junto al arroz incorporar el caldo de verduras y el azafrán.\nPaso 6: Mezclar todo con ayuda de una cuchara de madera y cocinar durante 10 minutos.\nPaso 7: Pasados los 10 minutos incorporar los mariscos y cocinar por 5 minutos más.\nPaso 8: Condimentar con ají molido. Agregar las arvejas, los pimientos asados y el perejil fresco. Apagar el fuego y dejar reposar la paella unos minutos antes de servirla.",
+    "ingredients": "2 dientes de ajo, 3 cucharadas de aceite, 2 cebollas, media unidad de morrón verde, media unidad de morrón rojo, 300 grs de Calamares, 125 cc de vino blanco, 2 tomates, 400 grs de arroz grano medio, 1 taza de caldo de verdura, 1 cápsula de azafrán, 10 tazas de agua, 200 grs de mejillones, 200 grs de almejas, 150 grs de camarones, 150 grs de berberechos, 8 unidades de langostinos, 150 grs de arvejas, 1 atado de perejil fresco, media cucharada de ají molido",
+    "difficulty": "dificil",
+    "isPremium": true,
+    "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767121016/hzoaajqa2e6vnz3m3n7y.jpg",
+    "creatorSeedKey": "creator_yeison"
+  },
+   {
+    "seedKey": "post_Fetuccini_a_la_carbonara",
+    "title": "Fetuccini a la carbonara",
+    "description": "Fettuccine es como denominan en Roma a los tallarines. El nombre de esta pasta deriva de la palabra “fettuccia”, que significa cinta.\nPreparación paso a paso\nPaso 1: Para la masa, mezclar los ingredientes en un bol y amasar. Estirar y cortar. Hervir en agua y sal.\nPaso 2: En una sartén con aceite de oliva saltear la panceta cortada en tiras finas. Una vez que se haya desgrasado la panceta, agregar el ajo.\nPaso 3: Incorporar el vino blanco y dejar evaporar el alcohol.\nPaso 4: Luego agregar la pasta y saltearla unos minutos para que se impregne de los sabores y se termine de cocinar.\nPaso 5: En un bol aparte mezclar las yemas de huevo con el queso y la crema de leche. Volcar toda la mezcla en la sartén donde están los Fettuccine. Saltear para incorporar bien.\nPaso 6:Agregar abundante perejil picado.",
+    "ingredients": "500 grs de Harina, 5 huevos, 2 cucharadas de aceite de oliva, 300 grs de panceta, 2 dientes de ajo, 1 vaso de vino blanco, 4 yemas de huevo, 2 tazas de crema de leche, 3 cucharadas de perejil, 100 grs de queso rallado",
+    "difficulty": "medio",
+    "isPremium": true,
+    "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767555251/fetuccini_wsmaco.jpg",
+    "creatorSeedKey": "creator_pablo"
+  },
+  {
+    "seedKey": "post__creme_brulee",
+    "title": "Creme Brulee",
+    "description": "La creme brulee es un postre típico frances que consiste de una natilla cubierta con una caramelo de azúcar. Todo chef tiene que haber hecho una buena creme brulee al menos una vez en su vida.\nPreparación paso a paso\nPaso 1: Precalentar el horno a 160 °C.\nPaso 2: Batir las yemas y el azúcar hasta lograr una mezcla suave y cremosa. Sumar la crema de leche y la vainilla, mezclar todo de manera suave.\nPaso 3: Preparar los moldes para la crema: disponerlos en una fuente grande para hornear con agua caliente que llegue a la mitad de los moldes (para hacer baño maria). Colocar la mezcla en los moldes y hornear entre 45 y 60 minutos.\nPaso 4: Colocar los moldes sobre un trapo de cocina, dejar enfriar y reposar por 15 minutos.\nPaso 5: Bajar la temperatura del horno. Espolvorear una capa delgada y uniforme de azúcar granulada sobre las natillas cocidas. Colocar de nuevo los moldes en el recipiente para hornear, esta vez con agua fría.\nPaso 6: Hornear de 3 a 5 minutos o hasta que el azúcar se derrita y se forme una dorada corteza caramelizada.",
+    "ingredients": "2 tazas de crema de leche, 5 yemas de huevo, 1 1/2 cucharaditas de extracto de vainilla, 150 grs de azucar granulada",
+    "difficulty": "facil",
+    "isPremium": false,
+    "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767551431/Creme-Brulee_n29abp.jpg",
+    "creatorSeedKey": "creator_maxi"
+  },
+  {
+    "seedKey": "post_ensalada_cesar",
+    "title": "Ensalada César",
+    "description": "La ensalada César se ha convertido en un plato clásico y querido en la gastronomía internacional, ideal para un almuerzo, pero también para una cena, se puede encontrar en numerosos restaurantes y cocinas caseras en todo el mundo.\nPreparación paso a paso\nPaso 1: Lavar la lechuga y cortarla con la mano en trozos grandes.\nPaso 2: Hervir los huevos en una olla con agua durante 5 minutos.\nPaso 3: Cortar la panceta en trozos pequeños y colocarla en una sartén caliente, cocinar hasta que esté crujiente y reservar.\nPaso 4: Cortar la pechuga de pollo en tiras de 1 cm. aprox. Cocinarlas en una sartén con un poco de aceite hasta que estén doradas.\nPaso 5: Quitar los bordes al pan y cortar en cuadraditos pequeños. Hacer los croutons poniéndolos en una sartén caliente o al horno hasta que estén dorados y crujientes.\nPaso 6:La salsa César: colocar las anchoas con el ajo y machacar hasta que quede una pasta. En un bol aparte, batir la yema con la mostaza e integrar. Agregar la pasta de anchoa y ajos hasta que esté bien unida. Salpimentar e ir agregando el aceite en forma de hilo y batiendo enérgicamente hasta que espese. Agregar, por último, el parmesano rallado.\nPaso 6: Colocar en una fuente la lechuga, por encima, el pollo, la panceta y los croutons. Bañar con la salsa César. ",
+    "ingredients": "1 planta de lechuga, 1 pechuga de pollo, 1 lonja de panceta, 1 trozo de queso parmesano, 2 huevos, 2 rodajas de pan de molde, Sal y pimienta, 1 yema de huevo, Jugo de medio limón, 1 diente de ajo, 3 anchoas",
+    "difficulty": "facil",
+    "isPremium": false,
+    "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767554122/ensalada-cesar-_jronwg.jpg",
+    "creatorSeedKey": "creator_orlando"
+  },
+  {
+    "seedKey": "post_bondiola_braseada",
+    "title": "Bondiola Braseada",
+    "description": "Todo el que cocina está bondiola de cerdo, no podrá creer el sabor intenso con el que sale del horno esta carne, además de sorprenderse con la textura que se encontrará en el paladar.\nPreparación paso a paso\nPaso 1: Colocar en una fuente alta la bondiola y cubrir con el agua, salsa de soja y miel.\nPaso 2: Tapar con papel aluminio y colocar en el horno por 3 horas a 180°.\nPaso 3: Cuando esté lista, cortar en porciones de 200 gramos.\nPaso 4: Cortal los hinojos por la mitad y luego en gajos.\nPaso 5: Colocar en una fuente para horno y agregar los dientes de ajo enteros, la ralladura de limón y el aceite de oliva.\nPaso 6: Tapar con papel aluminio y meter al horno por 20 minutos.\nPaso 7: Servir una porción de bondiola con un poco de su propio jugo y acompañar con los hinojos.",
+    "ingredients": "1 kilo de bondiola, 1 litro de agua, 200 cc de salsa de soja, 50 g de miel, 4 u de hinojos, 2 dientes de ajo, Ralladura de 1 limón",
+    "difficulty": "medio",
+    "isPremium": true,
+    "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767096225/bjigdgmee1u5v0fubuds.jpg",
+    "creatorSeedKey": "creator_caro"
+  }
+]

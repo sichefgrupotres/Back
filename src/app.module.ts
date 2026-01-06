@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -6,7 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
+<<<<<<< HEAD
+import { UsersService } from './users/users.service';
+import { PostsService } from './posts/posts.service';
+=======
 import { AdminModule } from './admin/admin.module';
+>>>>>>> dev
 
 @Module({
   imports: [
@@ -44,4 +49,17 @@ import { AdminModule } from './admin/admin.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements OnApplicationBootstrap {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly postsService: PostsService,
+  ) {}
+
+  async onApplicationBootstrap() {
+    await this.usersService.addUsers();
+    console.log('Usuarios agregados');
+
+    await this.postsService.addPosts();
+    console.log('Posts agregados');
+  }
+}

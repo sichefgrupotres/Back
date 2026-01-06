@@ -26,6 +26,10 @@ export class UsersService {
     return foundEmail;
   }
 
+  async addUsers(): Promise<{ message: string }> {
+    return await this.usersRepository.addUsers();
+  }
+
   async findByGoogleId(googleId: string) {
     return this.usersRepository.findOne(googleId);
   }

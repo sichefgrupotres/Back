@@ -10,8 +10,9 @@ import {
   Min,
   Max,
   Matches,
+  IsBoolean,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
 import { PostCategory } from '../enums/post-category.enum';
 
@@ -39,6 +40,16 @@ export class FilterPostDto {
   difficulty?: Difficulty;
 
   @IsOptional()
+<<<<<<< HEAD
+  @IsBoolean({ message: 'isPremium debe ser true o false' })
+  @Transform(({ value }) => value === 'true')
+  @ApiProperty({
+    required: false,
+    example: 'true',
+    description: 'Filtrar recetas premium o no premium',
+  })
+  isPremium?: boolean;
+=======
   @IsEnum(PostCategory)
   @ApiProperty({
     required: false,
@@ -46,6 +57,7 @@ export class FilterPostDto {
     description: 'Categoria de la receta',
   })
   category?: PostCategory;
+>>>>>>> dev
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })

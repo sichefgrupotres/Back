@@ -68,10 +68,19 @@ export class Post {
   difficulty: Difficulty;
 
   @Column({
+<<<<<<< HEAD
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+    unique: true,
+  })
+  seedKey?: string;
+=======
     type: 'enum',
     enum: PostCategory,
   })
   category: PostCategory;
+>>>>>>> dev
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
