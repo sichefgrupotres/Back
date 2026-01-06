@@ -48,7 +48,6 @@ export class FilterPostDto {
     description: 'Filtrar recetas premium o no premium',
   })
   isPremium?: boolean;
-
   @IsEnum(PostCategory)
   @ApiProperty({
     required: false,
