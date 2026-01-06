@@ -8,6 +8,10 @@ import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersService } from './users/users.service';
 import { PostsService } from './posts/posts.service';
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev
 import { AdminModule } from './admin/admin.module';
 
 @Module({
@@ -36,8 +40,6 @@ import { AdminModule } from './admin/admin.module';
     UsersModule,
 
     PostsModule,
-
-    AuthModule,
 
     AuthModule,
 
