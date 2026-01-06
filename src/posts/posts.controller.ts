@@ -39,7 +39,7 @@ import { ErrorResponseDto } from './dto/error-response.dto';
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) { }
+  constructor(private readonly postsService: PostsService) {}
 
   @ApiOperation({
     summary: 'Creacion de un posteo',
@@ -82,7 +82,7 @@ export class PostsController {
       ],
     },
   })
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async create(
@@ -93,7 +93,7 @@ export class PostsController {
         validators: [
           new MaxFileSizeValidator({
             maxSize: 2000000,
-            message: 'Supera el peso maximo de 50000kb',
+            message: 'Supera el peso maximo de 20000kb',
           }),
           new FileTypeValidator({ fileType: /^image\/.*/ }),
         ],
@@ -105,6 +105,7 @@ export class PostsController {
     const newPost = this.postsService.create(post, file, user);
     return newPost;
   }
+
   @ApiOperation({
     summary: 'Ver todos los posteos',
   })
@@ -117,7 +118,7 @@ export class PostsController {
     description: 'Parámetros de búsqueda inválidos',
     type: ErrorResponseDto,
   })
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get()
   findAll(@Query() filters: FilterPostDto) {
     return this.postsService.findAll(filters);
@@ -126,7 +127,7 @@ export class PostsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Seed de posts (solo desarrollo)' })
   @ApiOkResponse({ description: 'Seed de posts realizado' })
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('seeder')
   seedPosts(): Promise<{ message: string }> {
     return this.postsService.addPosts();

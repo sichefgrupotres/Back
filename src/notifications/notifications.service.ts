@@ -5,7 +5,7 @@ import { UserRegisteredEvent } from '../users/users.events';
 
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly sendgrid: SendgridProvider) { }
+  constructor(private readonly sendgrid: SendgridProvider) {}
 
   @OnEvent('user.registered', { async: true })
   async handleUserRegistered(event: UserRegisteredEvent) {
