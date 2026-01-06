@@ -107,7 +107,6 @@ export class PostsController {
   @ApiOperation({
     summary: 'Ver todos los posteos',
   })
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Listado paginado de posteos',
     type: PaginatedPostResponseDto,
@@ -116,7 +115,6 @@ export class PostsController {
     description: 'Parámetros de búsqueda inválidos',
     type: ErrorResponseDto,
   })
-  @UseGuards(AuthGuard)
   @Get()
   findAll(@Query() filters: FilterPostDto) {
     return this.postsService.findAll(filters);

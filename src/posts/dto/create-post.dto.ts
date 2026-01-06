@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
@@ -59,10 +60,15 @@ export class CreatePostDto {
   isPremium?: boolean;
 
   @IsOptional()
-  @IsEnum(PostCategory)
-  @ApiProperty({
-    example: 'Almuerzo',
-    description: 'Categoria de la receta',
+  @IsArray({ message: 'category must be an array' })
+  @IsEnum(PostCategory, {
+    each: true,
+    message:
+      'each value in category must be one of: desayunos, almuerzos, meriendas, cenas, postres',
   })
-  category?: PostCategory;
+  @ApiProperty({
+    example: ['desayunos', 'meriendas'],
+    isArray: true,
+  })
+  category?: PostCategory[];
 }

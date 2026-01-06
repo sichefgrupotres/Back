@@ -9,6 +9,6 @@ export type PostSeed = {
   difficulty: Difficulty;
   isPremium: boolean;
   imageUrl: string;
-  category: PostCategory;
+  category: PostCategory[];
   creatorSeedKey: string;
 };

@@ -11,6 +11,7 @@ import {
   Max,
   Matches,
   IsBoolean,
+  IsArray,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
@@ -49,13 +50,14 @@ export class FilterPostDto {
   })
   isPremium?: boolean;
 
-  @IsEnum(PostCategory)
+  @IsArray()
+  @IsEnum(PostCategory, { each: true })
   @ApiProperty({
     required: false,
-    example: 'Almuerzo',
-    description: 'Categoria de la receta',
+    example: ['Almuerzo', 'Cena'],
+    description: 'Categorias de la receta',
   })
-  category?: PostCategory;
+  category?: PostCategory[];
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })
