@@ -11,7 +11,6 @@ import {
   Max,
   Matches,
   IsBoolean,
-  IsArray,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
@@ -49,13 +48,11 @@ export class FilterPostDto {
     description: 'Filtrar recetas premium o no premium',
   })
   isPremium?: boolean;
-
-  @IsArray()
-  @IsEnum(PostCategory, { each: true })
+  @IsEnum(PostCategory)
   @ApiProperty({
     required: false,
-    example: ['Almuerzo', 'Cena'],
-    description: 'Categorias de la receta',
+    example: 'Almuerzos',
+    description: 'Categoria de la receta',
   })
   category?: PostCategory[];
 

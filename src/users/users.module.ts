@@ -5,9 +5,10 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { Post } from 'src/posts/entities/post.entity';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Post])],
+  imports: [TypeOrmModule.forFeature([User, Post]), NotificationsModule],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
   exports: [UsersService, UsersRepository, TypeOrmModule],

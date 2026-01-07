@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 import {
-  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
@@ -51,6 +50,14 @@ export class CreatePostDto {
   difficulty: Difficulty;
 
   @IsOptional()
+  @IsEnum(PostCategory)
+  @ApiProperty({
+    example: 'Almuerzos',
+    description: 'Categoria de la receta',
+  })
+  category?: PostCategory;
+
+  @IsOptional()
   @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
   @Transform(({ value }) => value === 'true')
   @ApiProperty({
@@ -58,17 +65,4 @@ export class CreatePostDto {
     description: 'Indica si el post es premium',
   })
   isPremium?: boolean;
-
-  @IsOptional()
-  @IsArray({ message: 'category must be an array' })
-  @IsEnum(PostCategory, {
-    each: true,
-    message:
-      'each value in category must be one of: desayunos, almuerzos, meriendas, cenas, postres',
-  })
-  @ApiProperty({
-    example: ['desayunos', 'meriendas'],
-    isArray: true,
-  })
-  category?: PostCategory[];
 }

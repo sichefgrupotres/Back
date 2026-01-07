@@ -13,12 +13,15 @@ import * as bcrypt from 'bcrypt';
 import { RegisterGoogleDto } from './dto/registerGoogle.dto';
 import usersData from '../utils/users.json';
 import { UserSeed } from './user-seed.type';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserRegisteredEvent } from './users.events';
 
 @Injectable()
 export class UsersRepository {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findAll() {
@@ -37,8 +40,6 @@ export class UsersRepository {
     // Separar confirmPassword y password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, password, ...rest } = createUserDto;
-
-    // Hash solo si password existe
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
     const user = this.usersRepository.create({
@@ -47,7 +48,10 @@ export class UsersRepository {
       status: UserStatus.ACTIVE,
       provider: AuthProvider.LOCAL,
     });
-
+    this.eventEmitter.emit(
+      'user.registered',
+      new UserRegisteredEvent(user.email, user.name ?? 'Usuario'),
+    );
     return this.usersRepository.save(user);
   }
 
@@ -129,6 +133,6 @@ export class UsersRepository {
   }
 
   async findBy(id: string) {
-    return this.usersRepository.findBy(id);
+    return this.usersRepository.findBy({ id });
   }
 }
