@@ -68,18 +68,31 @@ export class Post {
   difficulty: Difficulty;
 
   @Column({
+<<<<<<< HEAD
     type: 'enum',
     enum: PostCategory,
   })
   category: PostCategory;
 
   @Column({
+=======
+<<<<<<< HEAD
+>>>>>>> parent of 03c04de (Merge pull request #49 from sichefgrupotres/Carolina)
     type: 'varchar',
     length: 100,
     nullable: true,
     unique: true,
   })
   seedKey?: string;
+<<<<<<< HEAD
+=======
+=======
+    type: 'enum',
+    enum: PostCategory,
+  })
+  category: PostCategory;
+>>>>>>> dev
+>>>>>>> parent of 03c04de (Merge pull request #49 from sichefgrupotres/Carolina)
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
