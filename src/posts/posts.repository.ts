@@ -47,7 +47,6 @@ export class PostsRepository {
       page,
       limit,
       isPremium,
-      category,
     } = filters;
 
     let startDate: Date | undefined;
@@ -93,9 +92,6 @@ export class PostsRepository {
 
     if (isPremium !== undefined) {
       query.andWhere('post.isPremium = :isPremium', { isPremium });
-    }
-    if (category) {
-      query.andWhere('post.category = :category', { category });
     }
 
     if (creatorName) {
