@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -24,35 +29,68 @@ export class AuthService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async signinService(
-    credentials: LoginUserDto,
-  ): Promise<{ message: string; token: string }> {
+  async signinService(credentials: LoginUserDto) {
     const { email, password } = credentials;
 
-    const foundUser = await this.usersService.findOneEmail(email);
+    const user = await this.usersService.findOneEmail(email);
 
-    if (!foundUser.password) {
-      throw new UnauthorizedException(
-        'Este usuario debe iniciar sesión con Google',
-      );
+    if (!user) {
+      throw new BadRequestException('Usuario no válido');
     }
 
-    const validPassword = await bcrypt.compare(password!, foundUser.password);
+    if (user.blocked) {
+      throw new ForbiddenException('Usuario bloqueado');
+    }
+
+    // 🔵 LOGIN CON GOOGLE (no tiene password)
+    if (!user.password) {
+      const token = this.jwtService.sign({
+        sub: user.id,
+        email: user.email,
+        role: user.roleId,
+      });
+
+      // const token = this.jwtService.sign(payload);
+
+      return {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.roleId,
+        },
+        token,
+      };
+    }
+
+    // 🟢 LOGIN NORMAL
+    if (!password) {
+      throw new UnauthorizedException('Contraseña requerida');
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+
     if (!validPassword) {
-      throw new UnauthorizedException('Email y/o contraseña inccorrecto/s.!');
+      throw new UnauthorizedException('Email y/o contraseña incorrecto/s');
     }
 
-    const payload = {
-      id: foundUser.id,
-      name: foundUser.name,
-      email: foundUser.email,
-      role: foundUser.roleId,
-    };
+    const token = this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+      role: user.roleId,
+    });
 
-    const token = this.jwtService.sign(payload);
+    // const token = this.jwtService.sign(payload);
+
     return {
-      message: 'Usuario logueado con éxito',
-      token: token,
+      user: {
+        id: user.id,
+        name: user.name,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.roleId,
+      },
+      token,
     };
   }
 
@@ -60,6 +98,14 @@ export class AuthService {
     let user = await this.usersRepository.findOne({
       where: { googleId: dto.googleId },
     });
+
+    if (!user) {
+      throw new BadRequestException('Usuario no válido');
+    }
+
+    if (user.blocked) {
+      throw new ForbiddenException('Usuario bloqueado');
+    }
 
     if (!user) {
       user = await this.usersRepository.findOne({
@@ -90,7 +136,7 @@ export class AuthService {
 
     // 🔐 FIRMA JWT (CLAVE)
     const payload = {
-      id: user.id,
+      sub: user.id,
       email: user.email,
       role: user.roleId,
     };
@@ -98,8 +144,13 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
 
     return {
-      user,
-      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.roleId,
+      },
+      token: token,
     };
   }
 }

@@ -151,14 +151,14 @@ export class PostsRepository {
         }
 
         const post = this.postsRepository.create({
-          seedKey: postData.seedKey,
+          // seedKey: postData.seedKey,
           title: postData.title,
           description: postData.description,
           ingredients: postData.ingredients,
           difficulty: postData.difficulty,
           isPremium: postData.isPremium,
           imageUrl: postData.imageUrl,
-          category: postData.category,
+          category: [postData.category],
           creator,
         });
 

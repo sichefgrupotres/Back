@@ -35,6 +35,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FilterPostDto } from './dto/filter-post.dto';
 import { PaginatedPostResponseDto } from './dto/paginated-post-response.dto';
 import { ErrorResponseDto } from './dto/error-response.dto';
+import { FormDataInterceptor } from 'src/common/interceptors/formdata.interceptor';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -57,9 +58,13 @@ export class PostsController {
           enum: ['facil', 'medio', 'dificil'],
         },
         category: {
-          type: 'string',
-          enum: ['Desayunos', 'Almuerzos', 'Meriendas', 'Cenas', 'Postres'],
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: ['Desayunos', 'Almuerzos', 'Meriendas', 'Cenas', 'Postres'],
+          },
         },
+
         ingredients: { type: 'string' },
         isPremium: {
           type: 'boolean',
@@ -84,7 +89,7 @@ export class PostsController {
   })
   // @UseGuards(AuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'), FormDataInterceptor)
   async create(
     @Body() post: CreatePostDto,
     @Req() req: AuthRequest,
@@ -101,6 +106,8 @@ export class PostsController {
     )
     file: Express.Multer.File,
   ) {
+    console.log('category:', post.category);
+    console.log('isArray:', Array.isArray(post.category));
     const user = req.user as User;
     const newPost = this.postsService.create(post, file, user);
     return newPost;
