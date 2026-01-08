@@ -54,7 +54,7 @@ export class FilterPostDto {
     example: 'Almuerzos',
     description: 'Categoria de la receta',
   })
-  category?: PostCategory;
+  category?: PostCategory[];
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })
