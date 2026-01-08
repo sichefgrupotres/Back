@@ -30,7 +30,7 @@
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767555251/fetuccini_wsmaco.jpg",
     "creatorSeedKey": "creator_pablo",
-    "category": "Meriendas"
+    "category": "Almuerzos"
   },
   {
     "seedKey": "post__creme_brulee",
@@ -41,7 +41,7 @@
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767551431/Creme-Brulee_n29abp.jpg",
     "creatorSeedKey": "creator_maxi",
-    "category": "Desayunos"
+    "category": "Postres"
   },
   {
     "seedKey": "post_ensalada_cesar",
@@ -63,6 +63,6 @@
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767096225/bjigdgmee1u5v0fubuds.jpg",
     "creatorSeedKey": "creator_caro",
-    "category": "Postres"
+    "category": "Cenas"
   }
 ]

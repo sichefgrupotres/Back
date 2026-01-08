@@ -70,8 +70,9 @@ export class Post {
   @Column({
     type: 'enum',
     enum: PostCategory,
+    array: true,
   })
-  category: PostCategory;
+  category: PostCategory[];
 
   @Column({
     type: 'varchar',

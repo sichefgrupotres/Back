@@ -11,6 +11,7 @@ import {
   Max,
   Matches,
   IsBoolean,
+  IsArray,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
@@ -48,13 +49,17 @@ export class FilterPostDto {
     description: 'Filtrar recetas premium o no premium',
   })
   isPremium?: boolean;
-  @IsEnum(PostCategory)
+
   @ApiProperty({
     required: false,
     example: 'Almuerzos',
     description: 'Categoria de la receta',
   })
-  category?: PostCategory;
+  @IsOptional()
+  @IsArray()
+  @IsEnum(PostCategory, { each: true })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
+  category?: PostCategory[];
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })
