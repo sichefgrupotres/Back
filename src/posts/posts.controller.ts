@@ -116,7 +116,6 @@ export class PostsController {
   @ApiOperation({
     summary: 'Ver todos los posteos',
   })
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Listado paginado de posteos',
     type: PaginatedPostResponseDto,
