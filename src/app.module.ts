@@ -6,17 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
-<<<<<<< HEAD
+
 import { UsersService } from './users/users.service';
 import { PostsService } from './posts/posts.service';
-<<<<<<< HEAD
 import { AdminModule } from './admin/admin.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-=======
-=======
-import { AdminModule } from './admin/admin.module';
->>>>>>> dev
->>>>>>> parent of 03c04de (Merge pull request #49 from sichefgrupotres/Carolina)
 
 @Module({
   imports: [
