@@ -19,7 +19,8 @@ async function bootstrap() {
   app.use(express.json());
 
   app.enableCors({
-    origin: true,
+    origin: 'http://localhost:3000',
+    credentials: true,
   });
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Si_Chef')

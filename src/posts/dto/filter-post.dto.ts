@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEnum,
   IsIn,
@@ -12,13 +12,13 @@ import {
   Matches,
   IsBoolean,
   IsArray,
+  IsUUID,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
 import { PostCategory } from '../enums/post-category.enum';
 
 export class FilterPostDto {
-  //Búsqueda global (title, description, ingredients)
   @IsOptional()
   @IsString({ message: 'El texto de búsqueda debe ser una cadena' })
   @ApiProperty({
@@ -130,4 +130,9 @@ export class FilterPostDto {
     description: 'Cantidad de resultados por página',
   })
   limit?: number;
+
+  @ApiPropertyOptional()
+  @IsUUID()
+  @IsOptional()
+  creatorId?: string;
 }

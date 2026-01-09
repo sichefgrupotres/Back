@@ -17,7 +17,6 @@ import {
   UserStatus,
 } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-// import { AuthProvider, UserStatus } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -42,15 +41,12 @@ export class AuthService {
       throw new ForbiddenException('Usuario bloqueado');
     }
 
-    // 🔵 LOGIN CON GOOGLE (no tiene password)
     if (!user.password) {
       const token = this.jwtService.sign({
         sub: user.id,
         email: user.email,
         role: user.roleId,
       });
-
-      // const token = this.jwtService.sign(payload);
 
       return {
         user: {
@@ -63,7 +59,6 @@ export class AuthService {
       };
     }
 
-    // 🟢 LOGIN NORMAL
     if (!password) {
       throw new UnauthorizedException('Contraseña requerida');
     }
@@ -79,8 +74,6 @@ export class AuthService {
       email: user.email,
       role: user.roleId,
     });
-
-    // const token = this.jwtService.sign(payload);
 
     return {
       user: {
@@ -134,7 +127,6 @@ export class AuthService {
       }
     }
 
-    // 🔐 FIRMA JWT (CLAVE)
     const payload = {
       sub: user.id,
       email: user.email,

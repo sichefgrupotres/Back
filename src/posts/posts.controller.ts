@@ -15,6 +15,8 @@ import {
   Req,
   UseGuards,
   Query,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -64,7 +66,6 @@ export class PostsController {
             enum: ['Desayunos', 'Almuerzos', 'Meriendas', 'Cenas', 'Postres'],
           },
         },
-
         ingredients: { type: 'string' },
         isPremium: {
           type: 'boolean',
@@ -82,12 +83,11 @@ export class PostsController {
         'ingredients',
         'isPremium',
         'category',
-        'ingredients',
         'file',
       ],
     },
   })
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'), FormDataInterceptor)
   async create(
@@ -98,7 +98,7 @@ export class PostsController {
         validators: [
           new MaxFileSizeValidator({
             maxSize: 2000000,
-            message: 'Supera el peso maximo de 20000kb',
+            message: 'Supera el peso maximo de 2000kb',
           }),
           new FileTypeValidator({ fileType: /^image\/.*/ }),
         ],
@@ -106,15 +106,34 @@ export class PostsController {
     )
     file: Express.Multer.File,
   ) {
-    console.log('category:', post.category);
-    console.log('isArray:', Array.isArray(post.category));
     const user = req.user as User;
-    const newPost = this.postsService.create(post, file, user);
-    return newPost;
+    if (!user) throw new BadRequestException('Usuario no válido');
+    return this.postsService.create(post, file, user);
+  }
+
+  @ApiOperation({ summary: 'Ver mis posteos' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('my-posts')
+  findMyPosts(@Req() req: AuthRequest, @Query() filters: FilterPostDto) {
+    if (!req.user) {
+      throw new UnauthorizedException('Usuario no autenticado');
+    }
+
+    const userId = req.user.userId || req.user.id;
+    return this.postsService.findByCreator(userId, filters);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Seed de posts (solo desarrollo)' })
+  @ApiOkResponse({ description: 'Seed de posts realizado' })
+  @Get('seeder')
+  seedPosts(): Promise<{ message: string }> {
+    return this.postsService.addPosts();
   }
 
   @ApiOperation({
-    summary: 'Ver todos los posteos',
+    summary: 'Ver todos los posteos (público)',
   })
   @ApiOkResponse({
     description: 'Listado paginado de posteos',
@@ -124,27 +143,16 @@ export class PostsController {
     description: 'Parámetros de búsqueda inválidos',
     type: ErrorResponseDto,
   })
-  // @UseGuards(AuthGuard)
   @Get()
   findAll(@Query() filters: FilterPostDto) {
     return this.postsService.findAll(filters);
   }
 
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Seed de posts (solo desarrollo)' })
-  @ApiOkResponse({ description: 'Seed de posts realizado' })
-  // @UseGuards(AuthGuard)
-  @Get('seeder')
-  seedPosts(): Promise<{ message: string }> {
-    return this.postsService.addPosts();
-  }
-
   @ApiOperation({
     summary: 'Ver un posteo por su Id',
   })
-  @ApiBearerAuth()
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.postsService.findOne(id);
   }
 
@@ -155,7 +163,7 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Patch(':id')
   update(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
     return this.postsService.update(id, updatePostDto);
@@ -167,7 +175,7 @@ export class PostsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.postsService.remove(id);
   }
 }
