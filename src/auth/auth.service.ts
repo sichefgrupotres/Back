@@ -92,25 +92,20 @@ export class AuthService {
       where: { googleId: dto.googleId },
     });
 
-    if (!user) {
-      throw new BadRequestException('Usuario no válido');
-    }
-
-    if (user.blocked) {
-      throw new ForbiddenException('Usuario bloqueado');
-    }
-
+    // 🟢 Si no existe por googleId, buscamos por email
     if (!user) {
       user = await this.usersRepository.findOne({
         where: { email: dto.email },
       });
 
+      // 🟡 Existe por email pero no está vinculado a Google
       if (user && !user.googleId) {
         user.googleId = dto.googleId;
         user.provider = AuthProvider.GOOGLE;
         await this.usersRepository.save(user);
       }
 
+      // 🔵 No existe → crear usuario nuevo
       if (!user) {
         user = this.usersRepository.create({
           email: dto.email,
@@ -127,6 +122,12 @@ export class AuthService {
       }
     }
 
+    // 🔒 Validaciones finales
+    if (user.blocked) {
+      throw new ForbiddenException('Usuario bloqueado');
+    }
+
+    // 🎟️ JWT
     const payload = {
       sub: user.id,
       email: user.email,
@@ -139,10 +140,11 @@ export class AuthService {
       user: {
         id: user.id,
         name: user.name,
+        lastname: user.lastname,
         email: user.email,
         role: user.roleId,
       },
-      token: token,
+      token,
     };
   }
 }
