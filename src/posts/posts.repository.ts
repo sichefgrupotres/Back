@@ -25,14 +25,14 @@ export class PostsRepository {
   ) {}
 
   async create(post: CreatePostDto, user: User): Promise<Post> {
+    if (!user) {
+      throw new BadRequestException('Usuario no válido');
+    }
     const newPost = this.postsRepository.create({
       ...post,
       creator: user,
     });
 
-    if (!user) {
-      throw new BadRequestException('Usuario no válido');
-    }
     return await this.postsRepository.save(newPost);
   }
 
@@ -48,68 +48,48 @@ export class PostsRepository {
       limit,
       isPremium,
       category,
+      creatorId,
     } = filters;
-
-    let startDate: Date | undefined;
-    let endDate: Date | undefined;
-    if (fromDate) {
-      startDate = parseLocalDate(fromDate);
-    }
-    //true para asegurar que considere todo el día hasta 23:59
-    if (toDate) {
-      endDate = parseLocalDate(toDate, true);
-    }
-
-    if (startDate && endDate && startDate > endDate) {
-      throw new BadRequestException('fromDate no puede ser mayor que toDate');
-    }
 
     const query = this.postsRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.creator', 'creator');
 
-    if (startDate) {
-      query.andWhere('post.createdAt >= :fromDate', {
-        fromDate: startDate,
-      });
+    if (creatorId) {
+      query.andWhere('post.creatorId = :creatorId', { creatorId });
     }
 
-    if (endDate) {
-      query.andWhere('post.createdAt <= :toDate', {
-        toDate: endDate,
+    // Filtros
+    if (fromDate)
+      query.andWhere('post.createdAt >= :fromDate', {
+        fromDate: parseLocalDate(fromDate),
       });
-    }
-    if (search?.trim()) {
+
+    if (toDate)
+      query.andWhere('post.createdAt <= :toDate', {
+        toDate: parseLocalDate(toDate, true),
+      });
+    if (search?.trim())
       query.andWhere(
-        `(post.title ILIKE :search 
-        OR post.description ILIKE :search 
-        OR post.ingredients ILIKE :search)`,
+        `(post.title ILIKE :search OR post.description ILIKE :search OR post.ingredients ILIKE :search)`,
         { search: `%${search.trim()}%` },
       );
-    }
-    if (difficulty) {
+    if (difficulty)
       query.andWhere('post.difficulty = :difficulty', { difficulty });
-    }
-
-    if (isPremium !== undefined) {
+    if (isPremium !== undefined)
       query.andWhere('post.isPremium = :isPremium', { isPremium });
-    }
-
-    if (category) {
-      query.andWhere('post.category = :category', { category });
-    }
+    if (category) query.andWhere('post.category = :category', { category });
 
     if (creatorName) {
       const parts = creatorName.trim().split(/\s+/);
-
       if (parts.length === 1) {
         query.andWhere(
-          `(creator.name ILIKE :term OR creator.lastname ILIKE :term)`,
+          '(creator.name ILIKE :term OR creator.lastname ILIKE :term)',
           { term: `%${parts[0]}%` },
         );
       } else {
         query.andWhere(
-          `(creator.name ILIKE :name AND creator.lastname ILIKE :lastname)`,
+          '(creator.name ILIKE :name AND creator.lastname ILIKE :lastname)',
           {
             name: `%${parts[0]}%`,
             lastname: `%${parts[1]}%`,
@@ -119,17 +99,14 @@ export class PostsRepository {
     }
 
     query.orderBy('post.createdAt', orderByDate === 'asc' ? 'ASC' : 'DESC');
-
     const pageNumber = page ?? 1;
     const pageSize = limit ?? 5;
-
     query.skip((pageNumber - 1) * pageSize).take(pageSize);
 
     const [data, total] = await query.getManyAndCount();
 
     return {
       data,
-      //información adicional sobre paginación, datos para la navegación
       meta: {
         page: pageNumber,
         limit: pageSize,
@@ -156,7 +133,6 @@ export class PostsRepository {
         }
 
         const post = this.postsRepository.create({
-          // seedKey: postData.seedKey,
           title: postData.title,
           description: postData.description,
           ingredients: postData.ingredients,
