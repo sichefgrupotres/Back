@@ -55,6 +55,7 @@ export class AuthService {
           lastname: user.lastname,
           email: user.email,
           role: user.roleId,
+          avatarUrl: user.avatarUrl,
         },
         token,
       };
@@ -83,6 +84,7 @@ export class AuthService {
         lastname: user.lastname,
         email: user.email,
         role: user.roleId,
+        avatarUrl: user.avatarUrl ?? null,
       },
       token,
     };
@@ -93,42 +95,42 @@ export class AuthService {
       where: { googleId: dto.googleId },
     });
 
-    // 🟢 Si no existe por googleId, buscamos por email
     if (!user) {
       user = await this.usersRepository.findOne({
         where: { email: dto.email },
       });
 
-      // 🟡 Existe por email pero no está vinculado a Google
       if (user && !user.googleId) {
         user.googleId = dto.googleId;
         user.provider = AuthProvider.GOOGLE;
         await this.usersRepository.save(user);
       }
 
-      // 🔵 No existe → crear usuario nuevo
       if (!user) {
         user = this.usersRepository.create({
           email: dto.email,
           name: dto.name ?? null,
-          lastname: dto.lastname ?? null,
+          lastname: dto.lastname ?? undefined,
           googleId: dto.googleId,
           roleId: (dto.roleId as Role) || Role.USER,
           provider: AuthProvider.GOOGLE,
           status: UserStatus.ACTIVE,
+          avatarUrl: dto.avatarUrl ?? undefined,
           password: null,
         });
 
         await this.usersRepository.save(user);
       }
+      if (user && !user.avatarUrl && dto.avatarUrl) {
+        user.avatarUrl = dto.avatarUrl;
+        await this.usersRepository.save(user);
+      }
     }
 
-    // 🔒 Validaciones finales
     if (user.blocked) {
       throw new ForbiddenException('Usuario bloqueado');
     }
 
-    // 🎟️ JWT
     const payload = {
       sub: user.id,
       email: user.email,
@@ -144,6 +146,7 @@ export class AuthService {
         lastname: user.lastname,
         email: user.email,
         role: user.roleId,
+        avatarUrl: user.avatarUrl,
       },
       token,
     };

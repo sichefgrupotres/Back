@@ -1,14 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/usersResponse.dto';
 import { RegisterGoogleDto } from './dto/registerGoogle.dto';
+import { UploadImagenClou } from 'src/services/uploadImage';
 
 @Injectable()
 export class UsersService {
   usersService: any;
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private usersRepository: UsersRepository,
+    private readonly uploadImageClou: UploadImagenClou,
+  ) {}
 
   async create(user: CreateUserDto) {
     const usercreated = this.usersRepository.create(user);
@@ -81,5 +89,21 @@ export class UsersService {
 
   async createGoogleUser(data: RegisterGoogleDto) {
     return await this.usersRepository.createGoogleUser(data);
+  }
+
+  async uploadAvatar(userId: string, file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Archivo requerido');
+    }
+
+    const result = await this.uploadImageClou.uploadImage(file);
+
+    await this.usersRepository.update(userId, {
+      avatarUrl: result.secure_url,
+    });
+
+    return {
+      avatarUrl: result.secure_url,
+    };
   }
 }

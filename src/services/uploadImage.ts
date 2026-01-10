@@ -4,18 +4,24 @@ import { UploadApiResponse, v2 } from 'cloudinary';
 
 @Injectable()
 export class UploadImagenClou {
-  async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-    return new Promise((resolve) => {
+  async uploadImage(
+    file: Express.Multer.File,
+    options?: Record<string, any>,
+  ): Promise<UploadApiResponse> {
+    return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream(
-        { resource_type: 'auto' },
+        {
+          resource_type: 'image',
+          ...options,
+        },
         (error, result) => {
           if (error || !result) {
-            throw new Error('Error al cargar la imagen');
-          } else {
-            resolve(result);
+            return reject(new Error('Error al cargar la imagen'));
           }
+          resolve(result);
         },
       );
+
       toStream(file.buffer).pipe(upload);
     });
   }
