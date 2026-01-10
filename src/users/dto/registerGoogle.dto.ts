@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class RegisterGoogleDto {
   @IsEmail()
@@ -18,4 +18,8 @@ export class RegisterGoogleDto {
   @IsOptional()
   @IsString()
   roleId?: string;
+
+  @IsOptional()
+  @IsUrl()
+  avatarUrl?: string;
 }

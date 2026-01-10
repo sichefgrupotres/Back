@@ -123,4 +123,7 @@ export class User {
   @OneToMany(() => Post, (post) => post.creator)
   posts: [];
   length: number;
+
+  @Column({ nullable: true })
+  avatarUrl?: string;
 }
