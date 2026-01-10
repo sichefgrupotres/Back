@@ -43,6 +43,7 @@ export class PostsRepository {
       creatorName,
       fromDate,
       toDate,
+      orderByTitle,
       orderByDate,
       page,
       limit,
@@ -98,7 +99,16 @@ export class PostsRepository {
       }
     }
 
-    query.orderBy('post.createdAt', orderByDate === 'asc' ? 'ASC' : 'DESC');
+    if (orderByTitle) {
+      query
+        .addSelect('LOWER(post.title)', 'title_lower')
+        .orderBy('title_lower', orderByTitle.toUpperCase() as 'ASC' | 'DESC');
+    } else {
+      query.addOrderBy(
+        'post.createdAt',
+        orderByDate === 'asc' ? 'ASC' : 'DESC',
+      );
+    }
     const pageNumber = page ?? 1;
     const pageSize = limit ?? 5;
     query.skip((pageNumber - 1) * pageSize).take(pageSize);
