@@ -109,6 +109,18 @@ export class FilterPostDto {
   orderByDate?: 'asc' | 'desc';
 
   @IsOptional()
+  @IsIn(['asc', 'desc'], {
+    message: 'orderByTitle debe ser asc o desc',
+  })
+  @ApiProperty({
+    required: false,
+    enum: ['asc', 'desc'],
+    example: 'asc',
+    description: 'Ordenar recetas alfabéticamente por título',
+  })
+  orderByTitle?: 'asc' | 'desc';
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
