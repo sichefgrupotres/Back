@@ -1,0 +1,103 @@
+[
+  {
+    "seedKey": "admin",
+    "name": "Admin",
+    "lastname": "SiChef",
+    "email": "sichefgrupotres@gmail.com",
+    "password": "Admin2026$",
+    "roleId": "ADMIN",
+    "provider": "local"
+  },
+
+  {
+    "seedKey": "user_ana",
+    "name": "Ana",
+    "lastname": "Gomez",
+    "email": "ana@mail.com",
+    "password": "Ana2026$",
+    "roleId": "USER",
+    "provider": "local"
+  },
+  {
+    "seedKey": "user_lucas",
+    "name": "Lucas",
+    "lastname": "Perez",
+    "email": "lucas@mail.com",
+    "password": "Lucas2026$",
+    "roleId": "USER",
+    "provider": "local"
+  },
+  {
+    "seedKey": "user_maria",
+    "name": "Maria",
+    "lastname": "Lopez",
+    "email": "maria@mail.com",
+    "password": "Maria2026$",
+    "roleId": "USER",
+    "provider": "local"
+  },
+  {
+    "seedKey": "user_sofia",
+    "name": "Sofia",
+    "lastname": "Martinez",
+    "email": "sofia@mail.com",
+    "password": "Sofia2026$",
+    "roleId": "USER",
+    "provider": "local"
+  },
+  {
+    "seedKey": "user_diego",
+    "name": "Diego",
+    "lastname": "Ramirez",
+    "email": "diego@mail.com",
+    "password": "Diego2026$",
+    "roleId": "USER",
+    "provider": "local"
+  },
+
+  {
+    "seedKey": "creator_yeison",
+    "name": "Yeison",
+    "lastname": "Enciso",
+    "email": "yeendj@gmail.com",
+    "password": "Yeison2026$",
+    "roleId": "CREATOR",
+    "provider": "local"
+  },
+  {
+    "seedKey": "creator_pablo",
+    "name": "Pablo",
+    "lastname": "Aliano",
+    "email": "pabloaliano@gmail.com",
+    "password": "Pablo2026$",
+    "roleId": "CREATOR",
+    "provider": "local"
+  },
+  {
+    "seedKey": "creator_maxi",
+    "name": "Maxi",
+    "lastname": "Levy",
+    "email": "maximolevy11@gmail.com",
+    "password": "Maxi2026$",
+    "roleId": "CREATOR",
+    "provider": "local"
+  },
+  {
+    "seedKey": "creator_orlando",
+    "name": "Orlando",
+    "lastname": "Zarraga",
+    "email": "orlandozarraga31@hotmail.com",
+    "password": "Orlando2026$",
+    "roleId": "CREATOR",
+    "provider": "local"
+  },
+  {
+    "seedKey": "creator_caro",
+    "name": "Carolina",
+    "lastname": "Ariza",
+    "email": "carolinaarizat93@gmail.com",
+    "password": "Caro2026$",
+    "roleId": "CREATOR",
+    "provider": "local"
+  }
+]

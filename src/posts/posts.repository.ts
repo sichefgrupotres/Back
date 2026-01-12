@@ -1,0 +1,212 @@
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Post } from './entities/post.entity';
+import { Repository } from 'typeorm';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { User } from 'src/users/entities/user.entity';
+import { FilterPostDto } from './dto/filter-post.dto';
+import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
+import { parseLocalDate } from 'src/utils/date.utils';
+import postsData from '../utils/recipes.json';
+import { PostSeed } from './posts.seed.type';
+
+@Injectable()
+export class PostsRepository {
+  constructor(
+    @InjectRepository(Post)
+    private readonly postsRepository: Repository<Post>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+  ) {}
+
+  async create(post: CreatePostDto, user: User): Promise<Post> {
+    if (!user) {
+      throw new BadRequestException('Usuario no válido');
+    }
+    const newPost = this.postsRepository.create({
+      ...post,
+      creator: user,
+    });
+
+    return await this.postsRepository.save(newPost);
+  }
+
+  async findAll(filters: FilterPostDto): Promise<PaginatedResponse<Post>> {
+    const {
+      search,
+      difficulty,
+      creatorName,
+      fromDate,
+      toDate,
+      orderByTitle,
+      orderByDate,
+      page,
+      limit,
+      isPremium,
+      category,
+      creatorId,
+    } = filters;
+
+    const query = this.postsRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.creator', 'creator');
+
+    if (creatorId) {
+      query.andWhere('post.creatorId = :creatorId', { creatorId });
+    }
+
+    // Filtros
+    if (fromDate)
+      query.andWhere('post.createdAt >= :fromDate', {
+        fromDate: parseLocalDate(fromDate),
+      });
+
+    if (toDate)
+      query.andWhere('post.createdAt <= :toDate', {
+        toDate: parseLocalDate(toDate, true),
+      });
+    if (search?.trim())
+      query.andWhere(
+        `(post.title ILIKE :search OR post.description ILIKE :search OR post.ingredients ILIKE :search)`,
+        { search: `%${search.trim()}%` },
+      );
+    if (difficulty)
+      query.andWhere('post.difficulty = :difficulty', { difficulty });
+    if (isPremium !== undefined)
+      query.andWhere('post.isPremium = :isPremium', { isPremium });
+    if (category) query.andWhere('post.category = :category', { category });
+
+    if (creatorName) {
+      const parts = creatorName.trim().split(/\s+/);
+      if (parts.length === 1) {
+        query.andWhere(
+          '(creator.name ILIKE :term OR creator.lastname ILIKE :term)',
+          { term: `%${parts[0]}%` },
+        );
+      } else {
+        query.andWhere(
+          '(creator.name ILIKE :name AND creator.lastname ILIKE :lastname)',
+          {
+            name: `%${parts[0]}%`,
+            lastname: `%${parts[1]}%`,
+          },
+        );
+      }
+    }
+
+    if (orderByTitle) {
+      query
+        .addSelect('LOWER(post.title)', 'title_lower')
+        .orderBy('title_lower', orderByTitle.toUpperCase() as 'ASC' | 'DESC');
+    } else {
+      query.addOrderBy(
+        'post.createdAt',
+        orderByDate === 'asc' ? 'ASC' : 'DESC',
+      );
+    }
+    const pageNumber = page ?? 1;
+    const pageSize = limit ?? 5;
+    query.skip((pageNumber - 1) * pageSize).take(pageSize);
+
+    const [data, total] = await query.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        page: pageNumber,
+        limit: pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
+  }
+
+  async addPosts(): Promise<{ message: string }> {
+    const users = await this.usersRepository.find();
+
+    const typedPostsData = postsData as PostSeed[];
+    await Promise.all(
+      typedPostsData.map(async (postData) => {
+        const creator = users.find(
+          (user) => user.seedKey === postData.creatorSeedKey,
+        );
+
+        if (!creator) {
+          throw new NotFoundException(
+            `El usuario ${postData.creatorSeedKey} no existe`,
+          );
+        }
+
+        const post = this.postsRepository.create({
+          title: postData.title,
+          description: postData.description,
+          ingredients: postData.ingredients,
+          difficulty: postData.difficulty,
+          isPremium: postData.isPremium,
+          imageUrl: postData.imageUrl,
+          category: [postData.category],
+          creator,
+        });
+
+        await this.postsRepository
+          .createQueryBuilder()
+          .insert()
+          .into(Post)
+          .values(post)
+          .onConflict(
+            `
+          ("seedKey")
+          DO UPDATE SET
+            description = EXCLUDED.description,
+            ingredients = EXCLUDED.ingredients,
+            difficulty = EXCLUDED.difficulty,
+            "isPremium" = EXCLUDED."isPremium",
+            "imageUrl" = EXCLUDED."imageUrl",
+            "updated_at" = DEFAULT
+        `,
+          )
+          .execute();
+      }),
+    );
+
+    return { message: 'Posts agregados' };
+  }
+
+  async findOne(id: string) {
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: ['creator'],
+    });
+    if (!post) {
+      throw new NotFoundException('Post no encontrado');
+    }
+    return post;
+  }
+
+  async update(id: string, updatePostDto: UpdatePostDto) {
+    const result = await this.postsRepository.update(id, updatePostDto);
+
+    if (result.affected === 0) {
+      throw new NotFoundException('Post no encontrado');
+    }
+
+    return this.postsRepository.findOneBy({ id });
+  }
+
+  async remove(id: string) {
+    const post = await this.postsRepository.findOneBy({ id });
+    if (!post) {
+      throw new NotFoundException('Post no encontrado');
+    }
+    await this.postsRepository.remove(post);
+
+    return {
+      message: 'Post eliminado correctamente',
+    };
+  }
+}
