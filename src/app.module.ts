@@ -33,7 +33,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           process.env.NODE_ENV === 'production'
             ? { rejectUnauthorized: false }
             : false,
-        dropSchema: true,
+        dropSchema: false,
         logging: true,
       }),
     }),
