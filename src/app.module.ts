@@ -28,7 +28,11 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: process.env.NODE_ENV !== 'production',
+        ssl:
+          process.env.NODE_ENV === 'production'
+            ? { rejectUnauthorized: false }
+            : false,
         dropSchema: true,
         logging: true,
       }),
