@@ -17,23 +17,38 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (config: ConfigService) => ({
+    //     type: 'postgres',
+    //     host: config.get('DB_HOST'),
+    //     port: Number(config.get('DB_PORT')),
+    //     username: config.get('DB_USER'),
+    //     password: config.get('DB_PASSWORD'),
+    //     database: config.get('DB_NAME'),
+    //     autoLoadEntities: true,
+    //     synchronize: process.env.NODE_ENV !== 'production',
+    //     ssl:
+    //       process.env.NODE_ENV === 'production'
+    //         ? { rejectUnauthorized: false }
+    //         : false,
+    //     dropSchema: false,
+    //     logging: true,
+    //   }),
+    // }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        host: config.get('DB_HOST'),
-        port: Number(config.get('DB_PORT')),
-        username: config.get('DB_USER'),
-        password: config.get('DB_PASSWORD'),
-        database: config.get('DB_NAME'),
+        url: config.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
-        synchronize: process.env.NODE_ENV !== 'production',
+        synchronize: false,
         ssl:
-          process.env.NODE_ENV === 'production'
+          config.get('NODE_ENV') === 'production'
             ? { rejectUnauthorized: false }
             : false,
-        dropSchema: false,
         logging: true,
       }),
     }),
