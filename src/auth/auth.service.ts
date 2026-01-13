@@ -92,12 +92,12 @@ export class AuthService {
 
   async findOrCreateFromGoogle(dto: RegisterGoogleDto) {
     let user = await this.usersRepository.findOne({
-      where: { googleId: dto.googleId },
+      where: [{ googleId: dto.googleId }, { email: dto.email }],
     });
 
     if (!user) {
       user = await this.usersRepository.findOne({
-        where: { email: dto.email },
+        where: [{ email: dto.email }, { googleId: dto.googleId }],
       });
 
       if (user && !user.googleId) {
