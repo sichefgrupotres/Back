@@ -17,6 +17,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
+    //EN ESTAPA DE DESAROLLO (DESCOMENTAR ESTA PARTE)
     // TypeOrmModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
@@ -37,6 +38,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     //     logging: true,
     //   }),
     // }),
+    // EN PRODUCCION (DESCOMENTAR ESTA PARTE)
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
