@@ -19,7 +19,11 @@ async function bootstrap() {
   app.use(express.json());
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://si-chef.vercel.app'],
+    origin: [
+      'http://localhost:3000', // Para que sigas trabajando en tu PC
+      'https://si-chef.vercel.app', // Para que funcione el deploy de Vercel
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
   const swaggerConfig = new DocumentBuilder()
