@@ -10,6 +10,7 @@ import { UsersService } from './users/users.service';
 import { PostsService } from './posts/posts.service';
 import { AdminModule } from './admin/admin.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { TutorialsModule } from './tutorials/tutorials.module';
 
 @Module({
   imports: [
@@ -62,6 +63,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AuthModule,
 
     AdminModule,
+
+    TutorialsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

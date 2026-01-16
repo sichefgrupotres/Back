@@ -115,4 +115,12 @@ export class UsersService {
   async findUsersByRole(roleName: string): Promise<User[]> {
     return this.usersRepository.findUsersByRole(roleName);
   }
+
+  remove(id: string) {
+    if (!id) {
+      throw new Error('Usuario no encontrado');
+    }
+
+    return this.usersRepository.remove(id);
+  }
 }
