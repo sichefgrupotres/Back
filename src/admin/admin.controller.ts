@@ -41,11 +41,11 @@ export class AdminController {
   }
 
   @ApiOperation({
-    summary: 'Obtener usuarios por email',
+    summary: 'Obtener usuarios filtarizados por email o rol',
   })
-  @Get()
-  findOne(@Query() email: string) {
-    return this.adminService.findOneEmail(email);
+  @Get('users')
+  getUsers(@Query('email') email?: string, @Query('role') role?: string) {
+    return this.adminService.getUsers({ email, role });
   }
 
   @ApiOperation({
@@ -66,8 +66,13 @@ export class AdminController {
     return this.adminService.blockUser(id, dto.blocked);
   }
 
-  //   @Get('stats')
-  //   getStats() {
-  //     return this.adminService.getStats();
-  //   }
+  @ApiOperation({
+    summary: 'Obtener estadísticas del sistema',
+  })
+  // @UseGuards(AuthGuard, RolesGuard)
+  // @Roles('ADMIN')
+  @Get('stats')
+  getStats() {
+    return this.adminService.getStats();
+  }
 }
