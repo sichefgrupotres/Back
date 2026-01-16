@@ -147,4 +147,8 @@ export class UsersRepository {
       .where('role.name = :roleName', { roleName })
       .getMany();
   }
+
+  remove(id: string) {
+    return this.usersRepository.delete(id);
+  }
 }
