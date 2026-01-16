@@ -132,7 +132,19 @@ export class UsersRepository {
     return userUpdated;
   }
 
-  async findBy(id: string) {
-    return this.usersRepository.findBy({ id });
+  async findById(id: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ id });
+  }
+
+  count() {
+    return this.usersRepository.count();
+  }
+
+  async findUsersByRole(roleName: string): Promise<User[]> {
+    return await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.roleId', 'role')
+      .where('role.name = :roleName', { roleName })
+      .getMany();
   }
 }
