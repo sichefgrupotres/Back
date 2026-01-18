@@ -1,0 +1,16 @@
+/* eslint-disable */
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatGateway } from './chat.gateway';
+import { ChatService } from './chat.service';
+import { Message } from './entities/message.entity';
+import { PushNotificationsModule } from '../notifications/push-notifications/push-notifications.module'; // 👈 IMPORTAR
+
+@Module({
+    imports: [
+        TypeOrmModule.forFeature([Message]),
+        PushNotificationsModule // 👈 AGREGAR
+    ],
+    providers: [ChatGateway, ChatService],
+})
+export class ChatModule { }
