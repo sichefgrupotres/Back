@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
-@Injectable()
-export class UploadVideoClou {
-  async uploadVideo(file: Express.Multer.File): Promise<UploadApiResponse> {
+export class UploadVideoCloud {
+  async uploadVideo(
+    file: Express.Multer.File,
+  ): Promise<UploadApiResponse & { thumbnailUrl: string }> {
     return new Promise((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
@@ -22,7 +23,19 @@ export class UploadVideoClou {
               return;
             }
 
-            resolve(result);
+            const thumbnailUrl = cloudinary.url(result.public_id, {
+              resource_type: 'video',
+              format: 'jpg',
+              transformation: [
+                { width: 600, height: 400, crop: 'fill' },
+                { start_offset: 'auto' },
+              ],
+            });
+
+            resolve({
+              ...result,
+              thumbnailUrl,
+            });
           },
         )
         .end(file.buffer);

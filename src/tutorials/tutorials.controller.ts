@@ -2,9 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
+  Get,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
+  ParseUUIDPipe,
+  Patch,
   Post,
   Req,
   UploadedFile,
@@ -24,10 +29,29 @@ import { FormDataInterceptor } from 'src/common/interceptors/formdata.intercepto
 import type { AuthRequest } from 'src/auth/interfaces/auth-request.interfaces';
 import { User } from 'src/users/entities/user.entity';
 import { CreateTutorialDto } from './dto/create-tutorial.dto';
+import { UpdateTutorialDto } from './dto/update-tutorial.dto';
 
-@Controller()
+@Controller('tutorials')
 export class TutorialsController {
   constructor(private readonly tutorialsService: TutorialsService) {}
+
+  @ApiOperation({
+    summary: 'Obtener los tutoriales del usuario autenticado',
+  })
+  @ApiBearerAuth()
+  @Get('my-tutorials')
+  @UseGuards(AuthGuard('jwt'))
+  async getMyTutorials(@Req() req: AuthRequest) {
+    const user = req.user;
+    const userId = user?.sub ?? user?.id ?? user?.userId;
+
+    if (!userId) {
+      throw new BadRequestException('Usuario sin ID');
+    }
+
+    const tutorials = await this.tutorialsService.getTutorialsByUser(userId);
+    return { data: tutorials };
+  }
 
   @ApiOperation({
     summary: 'Creación de un tutorial con video',
@@ -59,10 +83,11 @@ export class TutorialsController {
     },
   })
   @UseGuards(AuthGuard('jwt'))
-  @Post('tutorial')
+  @Post()
   @UseInterceptors(FileInterceptor('video'), FormDataInterceptor)
   async createTutorial(
     @Body() dto: CreateTutorialDto,
+    @UploadedFile() file: Express.Multer.File,
     @Req() req: AuthRequest,
     @UploadedFile(
       new ParseFilePipe({
@@ -84,6 +109,42 @@ export class TutorialsController {
       throw new BadRequestException('Usuario no válido');
     }
 
-    return await this.tutorialsService.create(dto, video, user);
+    return await this.tutorialsService.create(dto, video, file, req.user);
+  }
+
+  @Get('user/:userId')
+  async getTutorialsByUser(@Param('userId') userId: string) {
+    return this.tutorialsService.getTutorialsByUser(userId);
+  }
+
+  @ApiOperation({ summary: 'Ver todos los tutoriales' })
+  @Get()
+  findAll() {
+    return this.tutorialsService.findAll();
+  }
+
+  @ApiOperation({ summary: 'Ver un tutorial por ID' })
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tutorialsService.findOne(id);
+  }
+
+  @ApiOperation({ summary: 'Actualizar un tutorial' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateTutorialDto: UpdateTutorialDto,
+  ) {
+    return this.tutorialsService.update(id, updateTutorialDto);
+  }
+
+  @ApiOperation({ summary: 'Eliminar un tutorial' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tutorialsService.remove(id);
   }
 }
