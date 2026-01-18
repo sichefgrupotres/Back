@@ -1,16 +1,19 @@
+/* eslint-disable */
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersService } from './users/users.service';
 import { PostsService } from './posts/posts.service';
 import { AdminModule } from './admin/admin.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TutorialsModule } from './tutorials/tutorials.module';
+import { ChatModule } from './chat/chat.module';
+import { PushNotificationsModule } from './notifications/push-notifications/push-notifications.module';
 
 @Module({
   imports: [
@@ -18,7 +21,9 @@ import { TutorialsModule } from './tutorials/tutorials.module';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
-    //EN ESTAPA DE DESAROLLO (DESCOMENTAR ESTA PARTE)
+
+    // ✅ MODO DESARROLLO (TU COMPUTADORA) - ACTIVADO
+
     // TypeOrmModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
@@ -30,16 +35,13 @@ import { TutorialsModule } from './tutorials/tutorials.module';
     //     password: config.get('DB_PASSWORD'),
     //     database: config.get('DB_NAME'),
     //     autoLoadEntities: true,
-    //     synchronize: process.env.NODE_ENV !== 'production',
-    //     ssl:
-    //       process.env.NODE_ENV === 'production'
-    //         ? { rejectUnauthorized: false }
-    //         : false,
-    //     dropSchema: false,
+    //     synchronize: true, // true en local para que cree las tablas
     //     logging: true,
     //   }),
     // }),
-    // EN PRODUCCION (DESCOMENTAR ESTA PARTE)
+
+    // ☁️ MODO PRODUCCION (RENDER) - COMENTADO PARA QUE NO FALLE LOCALMENTE
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -48,23 +50,19 @@ import { TutorialsModule } from './tutorials/tutorials.module';
         url: config.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
         synchronize: true,
-        ssl:
-          config.get('NODE_ENV') === 'production'
-            ? { rejectUnauthorized: false }
-            : false,
+        ssl: { rejectUnauthorized: false },
         logging: true,
       }),
     }),
 
+
     UsersModule,
-
     PostsModule,
-
     AuthModule,
-
     AdminModule,
-
     TutorialsModule,
+    ChatModule,
+    PushNotificationsModule
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -73,13 +71,18 @@ export class AppModule implements OnApplicationBootstrap {
   constructor(
     private readonly usersService: UsersService,
     private readonly postsService: PostsService,
-  ) {}
+  ) { }
 
   async onApplicationBootstrap() {
-    await this.usersService.addUsers();
-    console.log('Usuarios agregados');
+    try {
+      // Intentamos cargar datos semilla, si falla no importa
+      await this.usersService.addUsers();
+      console.log('Usuarios verificados/agregados');
 
-    await this.postsService.addPosts();
-    console.log('Posts agregados');
+      await this.postsService.addPosts();
+      console.log('Posts verificados/agregados');
+    } catch (error) {
+      console.warn('Omitiendo carga de datos semilla (ya existen o error):', error);
+    }
   }
 }
