@@ -25,6 +25,7 @@ import {
   ApiNotFoundResponse,
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
+import { SubscriptionResponseDto } from './dto/subscriptionResponseDto';
 
 @ApiTags('Subscriptions')
 @Controller('subscriptions')
@@ -75,6 +76,13 @@ export class SubscriptionsController {
     @Req() req: AuthRequest,
   ): Promise<ActiveSubscriptionResponseDto | null> {
     return this.subscriptionsService.getUserActiveSubscription(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Obtener todas las suscripciones (Admin)' })
+  @UseGuards(AuthGuard)
+  @Get('admin/all')
+  async getAllSubscriptions(): Promise<SubscriptionResponseDto[]> {
+    return this.subscriptionsService.getAllSubscriptionsForAdmin();
   }
 
   @ApiOperation({

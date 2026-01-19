@@ -18,6 +18,7 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateCheckoutDto } from './dto/create.checkout.dto';
 import { SubscriptionWithDetails } from './interfaces/SubscriptionWithDetails';
 import { ActiveSubscriptionResponseDto } from './dto/ActiveSubscriptionResponseDto';
+import { SubscriptionResponseDto } from './dto/subscriptionResponseDto';
 
 @Injectable()
 export class SubscriptionsService {
@@ -288,6 +289,25 @@ export class SubscriptionsService {
       cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
     };
   }
+
+  async getAllSubscriptionsForAdmin(): Promise<SubscriptionResponseDto[]> {
+    const subscriptions = await this.subscriptionsRepository.findAllForAdmin();
+    return subscriptions.map((sub) => {
+      return {
+        plan: sub.plan,
+        status: sub.status,
+        period: {
+          start: sub.currentPeriodStart,
+          end: sub.currentPeriodEnd,
+        },
+        cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
+        userEmail: sub.user?.email || 'Email no disponible',
+        userId: sub.userId,
+        createdAt: sub.createdAt,
+      };
+    });
+  }
+
   private getPriceIdForPlan(plan: SubscriptionPlan): string {
     const priceId = this.configService.get<string>(
       plan === SubscriptionPlan.MONTHLY
