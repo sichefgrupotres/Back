@@ -23,6 +23,10 @@ import { PushNotificationsModule } from './notifications/push-notifications/push
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
+<<<<<<< HEAD
+=======
+    // EN ESTAPA DE DESAROLLO (DESCOMENTAR ESTA PARTE)
+>>>>>>> b47c60f00c70296f7bb6cc90e37dc6927dac5317
 
     // ✅ MODO DESARROLLO (TU COMPUTADORA) - ACTIVADO
 
