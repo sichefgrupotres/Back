@@ -12,13 +12,10 @@ import { UsersService } from './users/users.service';
 import { PostsService } from './posts/posts.service';
 import { AdminModule } from './admin/admin.module';
 import { TutorialsModule } from './tutorials/tutorials.module';
-<<<<<<< HEAD
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { WebhooksModule } from './WebhooksModule/webhooks.Module';
-=======
 import { ChatModule } from './chat/chat.module';
 import { PushNotificationsModule } from './notifications/push-notifications/push-notifications.module';
->>>>>>> 77a23d6deaa4963f4f287aa1e78edb4508960a45
 
 @Module({
   imports: [
@@ -26,13 +23,10 @@ import { PushNotificationsModule } from './notifications/push-notifications/push
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
-<<<<<<< HEAD
     // EN ESTAPA DE DESAROLLO (DESCOMENTAR ESTA PARTE)
-=======
 
     // ✅ MODO DESARROLLO (TU COMPUTADORA) - ACTIVADO
 
->>>>>>> 77a23d6deaa4963f4f287aa1e78edb4508960a45
     // TypeOrmModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
@@ -70,14 +64,11 @@ import { PushNotificationsModule } from './notifications/push-notifications/push
     AuthModule,
     AdminModule,
     TutorialsModule,
-<<<<<<< HEAD
     SubscriptionsModule,
 
     WebhooksModule,
-=======
     ChatModule,
     PushNotificationsModule
->>>>>>> 77a23d6deaa4963f4f287aa1e78edb4508960a45
   ],
   controllers: [AppController],
   providers: [AppService],
