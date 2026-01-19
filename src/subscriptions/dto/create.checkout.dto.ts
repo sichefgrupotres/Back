@@ -15,7 +15,7 @@ export class CreateCheckoutDto {
 
   @ApiProperty({
     description: 'URL de éxito',
-    example: 'http://localhost:3001/subscription/success',
+    example: 'http://localhost:3000/subscription/success',
   })
   @IsString()
   @IsNotEmpty()
@@ -26,7 +26,7 @@ export class CreateCheckoutDto {
 
   @ApiProperty({
     description: 'URL de cancelación',
-    example: 'http://localhost:3001/subscription/cancel',
+    example: 'http://localhost:3000/subscription/cancel',
   })
   @IsString()
   @IsNotEmpty()
