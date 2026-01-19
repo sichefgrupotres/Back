@@ -11,6 +11,8 @@ import { PostsService } from './posts/posts.service';
 import { AdminModule } from './admin/admin.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TutorialsModule } from './tutorials/tutorials.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { WebhooksModule } from './WebhooksModule/webhooks.Module';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { TutorialsModule } from './tutorials/tutorials.module';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
-    //EN ESTAPA DE DESAROLLO (DESCOMENTAR ESTA PARTE)
+    // EN ESTAPA DE DESAROLLO (DESCOMENTAR ESTA PARTE)
     // TypeOrmModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
@@ -65,6 +67,9 @@ import { TutorialsModule } from './tutorials/tutorials.module';
     AdminModule,
 
     TutorialsModule,
+    SubscriptionsModule,
+
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
