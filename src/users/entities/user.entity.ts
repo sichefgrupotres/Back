@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Post } from 'src/posts/entities/post.entity';
+import { Subscription } from 'src/subscriptions/entities/subscription.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -84,8 +85,8 @@ export class User {
   })
   status?: UserStatus;
 
-  @Column({ name: 'subscription_id', nullable: true })
-  subscriptionId?: number;
+  @Column({ name: 'stripe_customer_id', unique: true, nullable: true })
+  stripeCustomerId?: string;
 
   @Column({
     type: 'varchar',
@@ -114,6 +115,9 @@ export class User {
   })
   blocked: boolean;
 
+  @Column({ nullable: true })
+  avatarUrl?: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -121,9 +125,8 @@ export class User {
   updatedAt: Date;
 
   @OneToMany(() => Post, (post) => post.creator)
-  posts: [];
-  length: number;
+  posts: Post[];
 
-  @Column({ nullable: true })
-  avatarUrl?: string;
+  @OneToMany(() => Subscription, (subscription) => subscription.user)
+  subscriptions: Subscription[];
 }
