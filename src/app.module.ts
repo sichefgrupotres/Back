@@ -2,7 +2,6 @@
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -11,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersService } from './users/users.service';
 import { PostsService } from './posts/posts.service';
 import { AdminModule } from './admin/admin.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { NotificationsModule } from './notifications/notifications.module';
 import { TutorialsModule } from './tutorials/tutorials.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { WebhooksModule } from './WebhooksModule/webhooks.Module';
@@ -64,6 +65,9 @@ import { FavoritesModule } from './favorites/favorites.module'; // 👈 Importar
     PostsModule,
     AuthModule,
     AdminModule,
+
+    NotificationsModule,
+
     TutorialsModule,
     SubscriptionsModule,
 
