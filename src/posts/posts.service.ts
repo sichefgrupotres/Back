@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto, PostStatus } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
@@ -88,7 +88,6 @@ export class PostsService {
     };
   }
 
-  // 👇 AQUÍ ESTABA EL ERROR, YA CORREGIDO
   async findAll(
     filters: FilterPostDto, userId: any,
   ): Promise<PaginatedResponse<PostResponseDto>> {
@@ -99,16 +98,14 @@ export class PostsService {
     let likedPostIds = new Set<string>();
 
     if (userId && postIds.length > 0) {
-      // Traemos los favoritos del usuario que coincidan con estos posts
       const favorites = await this.favoritesRepository.find({
         where: {
           user: { id: userId },
           post: { id: In(postIds) }
         },
-        relations: ['post'], // 👈 CLAVE 1: Cargamos la relación explícitamente
+        relations: ['post'],
       });
 
-      // 👈 CLAVE 2: Usamos ?.id y filtramos para que no explote si algo viene vacío
       likedPostIds = new Set(
         favorites
           .map(f => f.post?.id)
@@ -116,7 +113,6 @@ export class PostsService {
       );
     }
 
-    // Mapeamos agregando isFavorite
     const data: PostResponseDto[] = result.data.map((post: Post) => ({
       id: post.id,
       title: post.title,
@@ -155,5 +151,51 @@ export class PostsService {
 
   async findByCreator(userId: string, filters: FilterPostDto) {
     return this.postsRepository.findAll({ ...filters, creatorId: userId });
+  }
+
+  // 👇👇 MÉTODO NUEVO: Maneja la lógica de agregar/quitar con límite 👇👇
+  async toggleFavorite(postId: string, userId: string) {
+    // 1. Verificamos si ya existe (Quitar like)
+    const existingFavorite = await this.favoritesRepository.findOne({
+      where: {
+        post: { id: postId },
+        user: { id: userId },
+      },
+    });
+
+    if (existingFavorite) {
+      await this.favoritesRepository.remove(existingFavorite);
+      return { isFavorite: false, message: 'Eliminado de favoritos' };
+    }
+
+    // 2. Si es agregar like, verificamos límites
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    // Revisamos si es VIP (Premium, Admin o Creador)
+    // Ajusta 'CREATOR' / 'ADMIN' según como lo tengas en tu Enum exactamente
+    const isVip =
+      user.isPremium ||
+      user.roleId === 'ADMIN' ||
+      user.roleId === 'CREATOR';
+
+    if (!isVip) {
+      const count = await this.favoritesRepository.count({
+        where: { user: { id: userId } },
+      });
+
+      if (count >= 5) {
+        throw new BadRequestException('Límite de favoritos alcanzado');
+      }
+    }
+
+    // 3. Crear favorito
+    const newFavorite = this.favoritesRepository.create({
+      post: { id: postId },
+      user: { id: userId },
+    });
+
+    await this.favoritesRepository.save(newFavorite);
+    return { isFavorite: true, message: 'Agregado a favoritos' };
   }
 }
