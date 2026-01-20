@@ -68,7 +68,7 @@ export class ChatService {
         const messages = await this.messageRepository.find({
             where: { room: searchRoom },
             order: { createdAt: 'DESC' },
-            take: 100, // Límite alto para pruebas
+            take: 50, // Límite alto para pruebas
         });
         return messages.reverse();
     }

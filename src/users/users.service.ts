@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   BadRequestException,
   Injectable,
@@ -10,13 +11,45 @@ import { UserResponseDto } from './dto/usersResponse.dto';
 import { RegisterGoogleDto } from './dto/registerGoogle.dto';
 import { UploadImagenClou } from 'src/services/uploadImage';
 import { User } from './entities/user.entity';
+// 👇 IMPORTANTE: Estos imports son necesarios
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Brackets } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     private usersRepository: UsersRepository,
     private readonly uploadImageClou: UploadImagenClou,
-  ) {}
+    // 👇 INYECCIÓN DEL REPO TYPEORM (Necesario para la consulta del chat)
+    @InjectRepository(User)
+    private readonly typeOrmUserRepo: Repository<User>,
+  ) { }
+
+  // 👇👇 ESTA ES LA FUNCIÓN QUE TE FALTA 👇👇
+  async findAllChatUsers(currentUserId: string): Promise<User[]> {
+    const query = this.typeOrmUserRepo.createQueryBuilder('user');
+
+    query
+      .where('user.id != :currentUserId', { currentUserId })
+      .andWhere(new Brackets((qb) => {
+        // 👇 SOLUCIÓN: Solo buscamos el valor válido del Enum (Mayúscula)
+        qb.where('user.roleId = :role', { role: 'CREATOR' })
+          // .orWhere('user.roleId = :r2', { r2: 'creator' }) <--- ESTA LINEA LA BORRAMOS, ERA LA CULPABLE
+          .orWhere('user.isPremium = :premium', { premium: true });
+      }))
+      .select([
+        'user.id',
+        'user.name',
+        'user.lastname',
+        'user.email',
+        'user.avatarUrl',
+        'user.roleId',
+        'user.isPremium'
+      ]);
+
+    return await query.getMany();
+  }
+  // 👆👆 FIN DE LA FUNCIÓN QUE FALTABA 👆👆
 
   async create(user: CreateUserDto): Promise<{ message: string }> {
     const usercreated = await this.usersRepository.create(user);

@@ -5,10 +5,12 @@ import {
   Entity,
   // JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { PostCategory } from '../enums/post-category.enum';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 export enum Difficulty {
   facil = 'facil',
@@ -95,4 +97,7 @@ export class Post {
 
   @ManyToOne(() => User, (user) => user.posts, { nullable: false })
   creator: User;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.post)
+  favoritedBy: Favorite[];
 }

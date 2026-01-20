@@ -8,9 +8,15 @@ import { User } from 'src/users/entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { CloudinaryConfig } from 'src/config/cloudinary';
 import { UploadImagenClou } from 'src/services/uploadImage';
+import { FavoritesModule } from 'src/favorites/favorites.module';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, User]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Post, User, Favorite]),
+    AuthModule,
+    FavoritesModule,
+  ],
   controllers: [PostsController],
   providers: [
     PostsService,
@@ -20,4 +26,4 @@ import { UploadImagenClou } from 'src/services/uploadImage';
   ],
   exports: [PostsService],
 })
-export class PostsModule {}
+export class PostsModule { }

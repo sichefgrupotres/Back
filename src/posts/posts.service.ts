@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -8,8 +9,9 @@ import { FilterPostDto } from './dto/filter-post.dto';
 import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
 import { PostResponseDto } from './dto/post-response.dto';
 import { Post } from './entities/post.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 @Injectable()
 export class PostsService {
@@ -18,7 +20,9 @@ export class PostsService {
     private readonly uploadImageClou: UploadImagenClou,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {}
+    @InjectRepository(Favorite)
+    private readonly favoritesRepository: Repository<Favorite>,
+  ) { }
 
   async create(post: CreatePostDto, file: Express.Multer.File, user: any) {
     const userId = user.userId || user.id;
@@ -56,12 +60,35 @@ export class PostsService {
     };
   }
 
+  // 👇 AQUÍ ESTABA EL ERROR, YA CORREGIDO
   async findAll(
-    filters: FilterPostDto,
+    filters: FilterPostDto, userId: any,
   ): Promise<PaginatedResponse<PostResponseDto>> {
     const result: PaginatedResponse<Post> =
       await this.postsRepository.findAll(filters);
 
+    const postIds = result.data.map(p => p.id);
+    let likedPostIds = new Set<string>();
+
+    if (userId && postIds.length > 0) {
+      // Traemos los favoritos del usuario que coincidan con estos posts
+      const favorites = await this.favoritesRepository.find({
+        where: {
+          user: { id: userId },
+          post: { id: In(postIds) }
+        },
+        relations: ['post'], // 👈 CLAVE 1: Cargamos la relación explícitamente
+      });
+
+      // 👈 CLAVE 2: Usamos ?.id y filtramos para que no explote si algo viene vacío
+      likedPostIds = new Set(
+        favorites
+          .map(f => f.post?.id)
+          .filter((id): id is string => !!id)
+      );
+    }
+
+    // Mapeamos agregando isFavorite
     const data: PostResponseDto[] = result.data.map((post: Post) => ({
       id: post.id,
       title: post.title,
@@ -73,6 +100,7 @@ export class PostsService {
       imageUrl: post.imageUrl,
       createdAt: post.createdAt,
       creatorName: `${post.creator?.name ?? 'Desconocido'} ${post.creator?.lastname ?? ''}`,
+      isFavorite: likedPostIds.has(post.id),
     }));
 
     return {
