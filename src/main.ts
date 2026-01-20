@@ -3,10 +3,18 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { loggerGlobal } from './middlawares/logger.middlaware';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as express from 'express';
+import { json, raw, Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.originalUrl === '/webhooks/stripe') {
+      raw({ type: 'application/json' })(req, res, next);
+    } else {
+      json()(req, res, next);
+    }
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -16,13 +24,9 @@ async function bootstrap() {
   );
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(loggerGlobal);
-  app.use(express.json());
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000', // Para que sigas trabajando en tu PC
-      'https://si-chef.vercel.app', // Para que funcione el deploy de Vercel
-    ],
+    origin: ['http://localhost:3000', 'https://si-chef.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });

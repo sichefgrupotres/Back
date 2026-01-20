@@ -17,6 +17,7 @@ export class SendgridProvider {
       subject,
       html,
     };
+
     await sgMail.send(msg);
   }
 }
