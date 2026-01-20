@@ -19,6 +19,12 @@ export enum Difficulty {
   dificil = 'dificil',
 }
 
+export enum PostStatus {
+  SAFE = 'SAFE',
+  BLOCKED = 'BLOCKED',
+  NEEDS_REVIEW = 'NEEDS_REVIEW',
+}
+
 export class CreatePostDto {
   @IsNotEmpty({ message: 'El título es obligatorio' })
   @IsString({ message: 'El título debe ser una cadena de texto' })
@@ -55,7 +61,6 @@ export class CreatePostDto {
     example: 'Almuerzos',
     description: 'Categoria de la receta',
   })
-  // @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   @IsArray()
   @IsEnum(PostCategory, { each: true })
   category: PostCategory[];
@@ -68,4 +73,15 @@ export class CreatePostDto {
     description: 'Indica si el post es premium',
   })
   isPremium?: boolean;
+
+  @IsOptional()
+  @IsEnum(PostStatus, {
+    message: 'El status debe ser SAFE, BLOCKED o NEEDS_REVIEW',
+  })
+  @ApiProperty({
+    enum: PostStatus,
+    example: PostStatus.SAFE,
+    description: 'Estado del post según moderación',
+  })
+  statusPost: PostStatus;
 }

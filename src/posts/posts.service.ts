@@ -1,14 +1,17 @@
 /* eslint-disable */
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
+import { CreatePostDto, PostStatus } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
 import { User } from 'src/users/entities/user.entity';
 import { UploadImagenClou } from 'src/services/uploadImage';
 import { FilterPostDto } from './dto/filter-post.dto';
+import { PostEvent } from 'src/posts/post.event';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
 import { PostResponseDto } from './dto/post-response.dto';
 import { Post } from './entities/post.entity';
+import { PostModerationService } from '../modules/moderationPost/post-moderation.service';
 import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
@@ -20,6 +23,8 @@ export class PostsService {
     private readonly uploadImageClou: UploadImagenClou,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly postModerationService: PostModerationService,
     @InjectRepository(Favorite)
     private readonly favoritesRepository: Repository<Favorite>,
   ) { }
@@ -33,7 +38,6 @@ export class PostsService {
     const fullUser = await this.usersRepository.findOne({
       where: { id: userId },
     });
-
     if (!fullUser) {
       throw new BadRequestException('Usuario no encontrado');
     }
@@ -50,13 +54,36 @@ export class PostsService {
       isPremium: post.isPremium,
     };
 
-    const postCreated = await this.postsRepository.create(postCreate, fullUser);
+    const moderationResult = await this.postModerationService.moderatePost(
+      postCreate,
+      user.email,
+    );
 
+    const postCreated = await this.postsRepository.create(
+      { ...postCreate, statusPost: moderationResult.statusPost },
+      fullUser,
+    );
     if (!postCreated) return 'Error al crear el post';
-
+    if (moderationResult.statusPost === PostStatus.BLOCKED) {
+      this.eventEmitter.emit(
+        'post.blocked',
+        new PostEvent(
+          postCreate.title,
+          response.secure_url,
+          user.email,
+          moderationResult.results[0].category,
+        ),
+      );
+    } else {
+      this.eventEmitter.emit(
+        'post.created',
+        new PostEvent(postCreate.title, response.secure_url, user.email),
+      );
+    }
     return {
-      message: 'post creado con éxito',
+      statusPost: moderationResult.statusPost,
       imageUrl: response.secure_url,
+      post: postCreated,
     };
   }
 
@@ -110,7 +137,7 @@ export class PostsService {
   }
 
   async addPosts(): Promise<{ message: string }> {
-    return await this.postsRepository.addPosts();
+    return this.postsRepository.addPosts();
   }
 
   findOne(id: string) {

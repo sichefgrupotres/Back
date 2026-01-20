@@ -14,7 +14,7 @@ export class AuthController {
     summary: 'Inicio de sesion externa',
   })
   async registerGoogle(@Body() dto: RegisterGoogleDto) {
-    console.log('REGISTER GOOGLE BODY:', dto);
+    console.log('REGISTER GOOGLE BODY SENGRID:', dto);
     return await this.authService.findOrCreateFromGoogle(dto);
   }
 

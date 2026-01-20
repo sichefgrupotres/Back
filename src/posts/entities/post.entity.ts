@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  // JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -90,13 +89,11 @@ export class Post {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  //Posts N:1 Users
-  // @ManyToOne(() => User, (user) => user.posts)
-  // @JoinColumn({ name: 'creator_id' })
-  // creator: User;
-
   @ManyToOne(() => User, (user) => user.posts, { nullable: false })
   creator: User;
+
+  @Column({ default: 'SAFE' })
+  statusPost: 'SAFE' | 'BLOCKED' | 'NEEDS_REVIEW';
 
   @OneToMany(() => Favorite, (favorite) => favorite.post)
   favoritedBy: Favorite[];

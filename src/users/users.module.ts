@@ -5,11 +5,10 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { Post } from 'src/posts/entities/post.entity';
-import { NotificationsModule } from 'src/notifications/notifications.module';
 import { UploadImagenClou } from 'src/services/uploadImage';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Post]), NotificationsModule],
+  imports: [TypeOrmModule.forFeature([User, Post])],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository, UploadImagenClou],
   exports: [UsersService, UsersRepository, TypeOrmModule],

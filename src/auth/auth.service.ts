@@ -17,12 +17,15 @@ import {
   UserStatus,
 } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserRegisteredEvent } from 'src/users/users.events';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly eventEmitter: EventEmitter2,
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
@@ -138,6 +141,10 @@ export class AuthService {
     };
 
     const token = this.jwtService.sign(payload);
+    this.eventEmitter.emit(
+      'user.registered',
+      new UserRegisteredEvent(user.email, user.name ?? 'Usuario'),
+    );
 
     return {
       user: {
