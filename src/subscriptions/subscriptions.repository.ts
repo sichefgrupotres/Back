@@ -50,6 +50,13 @@ export class SubscriptionsRepository {
     }
   }
 
+  async findAllForAdmin(): Promise<Subscription[]> {
+    return await this.subscriptionRepository.find({
+      relations: ['user'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findAllByUserId(userId: string): Promise<Subscription[]> {
     try {
       return await this.subscriptionRepository.find({
