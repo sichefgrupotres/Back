@@ -11,7 +11,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Post]),
-    forwardRef(() => NotificationsModule), // ✅ AQUÍ
+    forwardRef(() => NotificationsModule),
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository, UploadImagenClou],
