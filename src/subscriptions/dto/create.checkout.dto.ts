@@ -1,4 +1,3 @@
-// dto/create.checkout.dto.ts
 import { IsEnum, IsString, IsNotEmpty, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { SubscriptionPlan } from '../entities/subscription.entity';
@@ -15,7 +14,7 @@ export class CreateCheckoutDto {
 
   @ApiProperty({
     description: 'URL de éxito',
-    example: 'http://localhost:3001/subscription/success',
+    example: 'http://localhost:3000/subscription/success',
   })
   @IsString()
   @IsNotEmpty()
@@ -26,7 +25,7 @@ export class CreateCheckoutDto {
 
   @ApiProperty({
     description: 'URL de cancelación',
-    example: 'http://localhost:3001/subscription/cancel',
+    example: 'http://localhost:3000/subscription/cancel',
   })
   @IsString()
   @IsNotEmpty()
