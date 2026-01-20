@@ -81,6 +81,7 @@ export class PostsService {
       );
     }
     return {
+      message: 'post creado con éxito',
       statusPost: moderationResult.statusPost,
       imageUrl: response.secure_url,
       post: postCreated,
@@ -137,7 +138,7 @@ export class PostsService {
   }
 
   async addPosts(): Promise<{ message: string }> {
-    return this.postsRepository.addPosts();
+    return await this.postsRepository.addPosts();
   }
 
   findOne(id: string) {
