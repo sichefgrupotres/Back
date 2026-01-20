@@ -27,7 +27,7 @@ export class PostsService {
     private readonly postModerationService: PostModerationService,
     @InjectRepository(Favorite)
     private readonly favoritesRepository: Repository<Favorite>,
-  ) {}
+  ) { }
 
   async create(post: CreatePostDto, file: Express.Multer.File, user: any) {
     const userId = user.userId || user.id;
@@ -89,13 +89,12 @@ export class PostsService {
 
   // 👇 AQUÍ ESTABA EL ERROR, YA CORREGIDO
   async findAll(
-    filters: FilterPostDto,
-    userId: any,
+    filters: FilterPostDto, userId: any,
   ): Promise<PaginatedResponse<PostResponseDto>> {
     const result: PaginatedResponse<Post> =
       await this.postsRepository.findAll(filters);
 
-    const postIds = result.data.map((p) => p.id);
+    const postIds = result.data.map(p => p.id);
     let likedPostIds = new Set<string>();
 
     if (userId && postIds.length > 0) {
@@ -103,14 +102,16 @@ export class PostsService {
       const favorites = await this.favoritesRepository.find({
         where: {
           user: { id: userId },
-          post: { id: In(postIds) },
+          post: { id: In(postIds) }
         },
         relations: ['post'], // 👈 CLAVE 1: Cargamos la relación explícitamente
       });
 
       // 👈 CLAVE 2: Usamos ?.id y filtramos para que no explote si algo viene vacío
       likedPostIds = new Set(
-        favorites.map((f) => f.post?.id).filter((id): id is string => !!id),
+        favorites
+          .map(f => f.post?.id)
+          .filter((id): id is string => !!id)
       );
     }
 
@@ -129,7 +130,10 @@ export class PostsService {
       isFavorite: likedPostIds.has(post.id),
     }));
 
-    return { data, meta: result.meta };
+    return {
+      data,
+      meta: result.meta,
+    };
   }
 
   async addPosts(): Promise<{ message: string }> {

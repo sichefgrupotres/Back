@@ -47,7 +47,7 @@ export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly favoritesService: FavoritesService,
-  ) { }
+  ) {}
 
   @ApiOperation({
     summary: 'Creacion de un posteo',
@@ -188,7 +188,7 @@ export class PostsController {
       if (decoded) {
         // Buscamos el ID en las propiedades comunes (sub, userId, o id)
         userId = decoded.sub || decoded.userId || decoded.id;
-        console.log("✅ Usuario identificado en Posts:", userId);
+        console.log('✅ Usuario identificado en Posts:', userId);
       }
     }
 

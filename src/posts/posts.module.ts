@@ -10,11 +10,14 @@ import { CloudinaryConfig } from 'src/config/cloudinary';
 import { UploadImagenClou } from 'src/services/uploadImage';
 import { ModerationModule } from 'src/modules/moderation/moderation.module';
 import { PostModerationService } from 'src/modules/moderationPost/post-moderation.service';
+import { FavoritesModule } from 'src/favorites/favorites.module';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, User]),
+    TypeOrmModule.forFeature([Post, User, Favorite]),
     AuthModule,
+    FavoritesModule,
     ModerationModule,
   ],
   controllers: [PostsController],
@@ -28,4 +31,4 @@ import { PostModerationService } from 'src/modules/moderationPost/post-moderatio
   ],
   exports: [PostsService],
 })
-export class PostsModule { }
+export class PostsModule {}
