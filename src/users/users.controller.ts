@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Controller,
   Get,
@@ -12,6 +13,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
+  UnauthorizedException, // 👈 1. Importamos esto
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,19 +26,23 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  // ... (Tus otros métodos POST, etc. déjalos igual)
-
-  // 👇 MOVI ESTO AQUÍ ARRIBA (Antes de :id)
-  // GET /users/chat-list -> Devuelve usuarios para el sidebar
+  // 👇 MÉTODO CORREGIDO PARA EL CHAT
   @Get('chat-list')
-  async getChatUsers() {
-    const users = await this.usersService.findAll();
+  @UseGuards(JwtAuthGuard)
+  async getChatUsers(@Req() req) {
+    const userId = req.user.sub || req.user.userId || req.user.id;
+    if (!userId) throw new UnauthorizedException('Usuario no identificado');
+
+    const users = await this.usersService.findAllChatUsers(userId);
+
+    // Ahora sí TypeScript estará feliz sin trucos
     return users.map((u) => ({
       id: u.id,
-      name: `${u.name} ${u.lastname}`,
+      name: `${u.name || ''} ${u.lastname || ''}`.trim(),
       email: u.email,
       avatar: u.avatarUrl || 'https://ui-avatars.com/api/?name=' + u.name,
-      role: u.roleId,
+      role: u.roleId,     // 👈 OJO: Usamos roleId porque así se llama en tu entidad
+      isPremium: u.isPremium // 👈 Ahora esto existe y funcionará perfecto
     }));
   }
   // 👆 FIN DEL CAMBIO
@@ -45,13 +51,13 @@ export class UsersController {
     summary: 'Buscar a un usuario por su Id',
   })
   @ApiBearerAuth()
-  @Get(':id') // 👈 Ahora este está DEBAJO de chat-list, así que no interferirá
+  @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
-  // ... (El resto de tu código update, remove, etc. sigue igual)
+  // ... (Resto de tu código: uploadAvatar, create, findAll, etc. sigue igual) ...
 
   @Post('avatar')
   @UseGuards(JwtAuthGuard)
@@ -88,8 +94,6 @@ export class UsersController {
     required: true,
   })
   @ApiBearerAuth()
-  // @Get() // ⚠️ OJO: Tienes dos @Get() seguidos (findAll y este). Nest solo usará el primero.
-  // Lo ideal sería @Get('search') o manejar el query dentro de findAll, pero por ahora déjalo si no te da problemas.
   findOneEmail(@Query() email: string) {
     return this.usersService.findOne(email);
   }

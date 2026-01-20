@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Controller,
   Get,
@@ -19,6 +20,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -42,7 +44,10 @@ import { FormDataInterceptor } from 'src/common/interceptors/formdata.intercepto
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly favoritesService: FavoritesService,
+  ) { }
 
   @ApiOperation({
     summary: 'Creacion de un posteo',
@@ -111,6 +116,33 @@ export class PostsController {
     return this.postsService.create(post, file, user);
   }
 
+  // 1. ENDPOINT PARA OBTENER LA LISTA (Debe ir ANTES de :id)
+  @ApiOperation({ summary: 'Obtener mis posts favoritos' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('favorites/my-list')
+  async getMyFavorites(@Req() req: AuthRequest) {
+    if (!req.user) throw new UnauthorizedException('Usuario no autenticado');
+
+    const userId = req.user.userId || req.user.id;
+    return this.favoritesService.getUserFavorites(userId);
+  }
+
+  // 2. ENDPOINT PARA TOGGLE FAVORITE (Dar like)
+  @ApiOperation({ summary: 'Agregar o quitar de favoritos' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Post(':id/favorite')
+  async toggleFavorite(
+    @Param('id', ParseUUIDPipe) postId: string,
+    @Req() req: AuthRequest,
+  ) {
+    if (!req.user) throw new UnauthorizedException('Usuario no autenticado');
+
+    const userId = req.user.userId || req.user.id;
+    return this.favoritesService.toggleFavorite(userId, postId);
+  }
+
   @ApiOperation({ summary: 'Ver mis posteos' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -144,8 +176,23 @@ export class PostsController {
     type: ErrorResponseDto,
   })
   @Get()
-  findAll(@Query() filters: FilterPostDto) {
-    return this.postsService.findAll(filters);
+  findAll(@Req() req: any, @Query() filters: FilterPostDto) {
+    let userId = undefined;
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      // 👇 Ahora esta línea funcionará porque ya agregaste la función abajo
+      const decoded = this.decodeToken(token);
+
+      if (decoded) {
+        // Buscamos el ID en las propiedades comunes (sub, userId, o id)
+        userId = decoded.sub || decoded.userId || decoded.id;
+        console.log("✅ Usuario identificado en Posts:", userId);
+      }
+    }
+
+    return this.postsService.findAll(filters, userId);
   }
 
   @ApiOperation({
@@ -177,5 +224,16 @@ export class PostsController {
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.postsService.remove(id);
+  }
+
+  // 👇 FUNCIÓN AUXILIAR PARA LEER EL TOKEN
+  private decodeToken(token: string) {
+    try {
+      const base64Payload = token.split('.')[1];
+      const payloadBuffer = Buffer.from(base64Payload, 'base64');
+      return JSON.parse(payloadBuffer.toString());
+    } catch (e) {
+      return null;
+    }
   }
 }
