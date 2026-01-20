@@ -3,10 +3,18 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { loggerGlobal } from './middlawares/logger.middlaware';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as express from 'express';
+import { json, raw, Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.originalUrl === '/webhooks/stripe') {
+      raw({ type: 'application/json' })(req, res, next);
+    } else {
+      json()(req, res, next);
+    }
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -16,10 +24,11 @@ async function bootstrap() {
   );
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(loggerGlobal);
-  app.use(express.json());
 
   app.enableCors({
-    origin: true,
+    origin: ['http://localhost:3000', 'https://si-chef.vercel.app'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   });
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Si_Chef')
@@ -30,6 +39,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
   const port = process.env.PORT || 3001;
-  await app.listen(port);
+
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();

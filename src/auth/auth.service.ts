@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -12,58 +17,90 @@ import {
   UserStatus,
 } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-// import { AuthProvider, UserStatus } from 'src/users/entities/user.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserRegisteredEvent } from 'src/users/users.events';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly eventEmitter: EventEmitter2,
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async signinService(
-    credentials: LoginUserDto,
-  ): Promise<{ message: string; token: string }> {
+  async signinService(credentials: LoginUserDto) {
     const { email, password } = credentials;
 
-    const foundUser = await this.usersService.findOneEmail(email);
+    const user = await this.usersService.findOneEmail(email);
 
-    if (!foundUser.password) {
-      throw new UnauthorizedException(
-        'Este usuario debe iniciar sesión con Google',
-      );
+    if (!user) {
+      throw new BadRequestException('Usuario no válido');
     }
 
-    const validPassword = await bcrypt.compare(password!, foundUser.password);
+    if (user.blocked) {
+      throw new ForbiddenException('Usuario bloqueado');
+    }
+
+    if (!user.password) {
+      const token = this.jwtService.sign({
+        sub: user.id,
+        email: user.email,
+        role: user.roleId,
+      });
+
+      return {
+        user: {
+          id: user.id,
+          name: user.name,
+          lastname: user.lastname,
+          email: user.email,
+          role: user.roleId,
+          avatarUrl: user.avatarUrl,
+        },
+        token,
+      };
+    }
+
+    if (!password) {
+      throw new UnauthorizedException('Contraseña requerida');
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+
     if (!validPassword) {
-      throw new UnauthorizedException('Email y/o contraseña inccorrecto/s.!');
+      throw new UnauthorizedException('Email y/o contraseña incorrecto/s');
     }
 
-    const payload = {
-      id: foundUser.id,
-      name: foundUser.name,
-      email: foundUser.email,
-      role: foundUser.roleId,
-    };
+    const token = this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+      role: user.roleId,
+    });
 
-    const token = this.jwtService.sign(payload);
     return {
-      message: 'Usuario logueado con éxito',
-      token: token,
+      user: {
+        id: user.id,
+        name: user.name,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.roleId,
+        avatarUrl: user.avatarUrl ?? null,
+      },
+      token,
     };
   }
 
   async findOrCreateFromGoogle(dto: RegisterGoogleDto) {
     let user = await this.usersRepository.findOne({
-      where: { googleId: dto.googleId },
+      where: [{ googleId: dto.googleId }, { email: dto.email }],
     });
 
     if (!user) {
       user = await this.usersRepository.findOne({
-        where: { email: dto.email },
+        where: [{ email: dto.email }, { googleId: dto.googleId }],
       });
 
       if (user && !user.googleId) {
@@ -76,29 +113,48 @@ export class AuthService {
         user = this.usersRepository.create({
           email: dto.email,
           name: dto.name ?? null,
-          lastname: dto.lastname ?? null,
+          lastname: dto.lastname ?? undefined,
           googleId: dto.googleId,
           roleId: (dto.roleId as Role) || Role.USER,
           provider: AuthProvider.GOOGLE,
           status: UserStatus.ACTIVE,
+          avatarUrl: dto.avatarUrl ?? undefined,
           password: null,
         });
 
         await this.usersRepository.save(user);
       }
+      if (user && !user.avatarUrl && dto.avatarUrl) {
+        user.avatarUrl = dto.avatarUrl;
+        await this.usersRepository.save(user);
+      }
     }
 
-    // 🔐 FIRMA JWT (CLAVE)
+    if (user.blocked) {
+      throw new ForbiddenException('Usuario bloqueado');
+    }
+
     const payload = {
-      id: user.id,
+      sub: user.id,
       email: user.email,
       role: user.roleId,
     };
 
     const token = this.jwtService.sign(payload);
+    this.eventEmitter.emit(
+      'user.registered',
+      new UserRegisteredEvent(user.email, user.name ?? 'Usuario'),
+    );
 
     return {
-      user,
+      user: {
+        id: user.id,
+        name: user.name,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.roleId,
+        avatarUrl: user.avatarUrl,
+      },
       token,
     };
   }

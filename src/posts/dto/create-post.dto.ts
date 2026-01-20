@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
@@ -16,6 +17,12 @@ export enum Difficulty {
   facil = 'facil',
   medio = 'medio',
   dificil = 'dificil',
+}
+
+export enum PostStatus {
+  SAFE = 'SAFE',
+  BLOCKED = 'BLOCKED',
+  NEEDS_REVIEW = 'NEEDS_REVIEW',
 }
 
 export class CreatePostDto {
@@ -50,12 +57,13 @@ export class CreatePostDto {
   difficulty: Difficulty;
 
   @IsOptional()
-  @IsEnum(PostCategory)
   @ApiProperty({
     example: 'Almuerzos',
     description: 'Categoria de la receta',
   })
-  category?: PostCategory;
+  @IsArray()
+  @IsEnum(PostCategory, { each: true })
+  category: PostCategory[];
 
   @IsOptional()
   @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
@@ -65,4 +73,15 @@ export class CreatePostDto {
     description: 'Indica si el post es premium',
   })
   isPremium?: boolean;
+
+  @IsOptional()
+  @IsEnum(PostStatus, {
+    message: 'El status debe ser SAFE, BLOCKED o NEEDS_REVIEW',
+  })
+  @ApiProperty({
+    enum: PostStatus,
+    example: PostStatus.SAFE,
+    description: 'Estado del post según moderación',
+  })
+  statusPost: PostStatus;
 }

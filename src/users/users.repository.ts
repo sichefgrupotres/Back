@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import type { DeepPartial } from 'typeorm';
-import { AuthProvider, User, UserStatus } from './entities/user.entity';
+import { AuthProvider, Role, User, UserStatus } from './entities/user.entity';
 import {
   BadRequestException,
   Injectable,
@@ -37,7 +37,6 @@ export class UsersRepository {
       throw new BadRequestException('El email ya está registrado');
     }
 
-    // Separar confirmPassword y password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, password, ...rest } = createUserDto;
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
@@ -53,6 +52,9 @@ export class UsersRepository {
       new UserRegisteredEvent(user.email, user.name ?? 'Usuario'),
     );
     return this.usersRepository.save(user);
+  }
+  async findAdmins(): Promise<User[]> {
+    return this.usersRepository.find({ where: { roleId: Role.ADMIN } });
   }
 
   async addUsers(): Promise<{ message: string }> {
@@ -93,8 +95,11 @@ export class UsersRepository {
       status: UserStatus.ACTIVE,
       password: null,
     };
-
     const user = this.usersRepository.create(userGoogle);
+    this.eventEmitter.emit(
+      'user.registered',
+      new UserRegisteredEvent(user.email, user.name ?? 'Usuario'),
+    );
     return await this.usersRepository.save(user);
   }
 
@@ -132,7 +137,23 @@ export class UsersRepository {
     return userUpdated;
   }
 
-  async findBy(id: string) {
-    return this.usersRepository.findBy({ id });
+  async findById(id: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ id });
+  }
+
+  count() {
+    return this.usersRepository.count();
+  }
+
+  async findUsersByRole(roleName: string): Promise<User[]> {
+    return await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.roleId', 'role')
+      .where('role.name = :roleName', { roleName })
+      .getMany();
+  }
+
+  remove(id: string) {
+    return this.usersRepository.delete(id);
   }
 }

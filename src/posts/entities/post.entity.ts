@@ -3,12 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { PostCategory } from '../enums/post-category.enum';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 export enum Difficulty {
   facil = 'facil',
@@ -70,8 +71,9 @@ export class Post {
   @Column({
     type: 'enum',
     enum: PostCategory,
+    array: true,
   })
-  category: PostCategory;
+  category: PostCategory[];
 
   @Column({
     type: 'varchar',
@@ -80,11 +82,6 @@ export class Post {
     unique: true,
   })
   seedKey?: string;
-  @Column({
-    type: 'enum',
-    enum: PostCategory,
-  })
-  category: PostCategory;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -92,8 +89,12 @@ export class Post {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  //Posts N:1 Users
-  @ManyToOne(() => User, (user) => user.posts)
-  @JoinColumn({ name: 'creator_id' })
+  @ManyToOne(() => User, (user) => user.posts, { nullable: false })
   creator: User;
+
+  @Column({ default: 'SAFE' })
+  statusPost: 'SAFE' | 'BLOCKED' | 'NEEDS_REVIEW';
+
+  @OneToMany(() => Favorite, (favorite) => favorite.post)
+  favoritedBy: Favorite[];
 }

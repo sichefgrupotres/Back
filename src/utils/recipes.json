@@ -30,7 +30,7 @@
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767555251/fetuccini_wsmaco.jpg",
     "creatorSeedKey": "creator_pablo",
-    "category": "Meriendas"
+    "category": "Almuerzos"
   },
   {
     "seedKey": "post__creme_brulee",
@@ -41,14 +41,14 @@
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767551431/Creme-Brulee_n29abp.jpg",
     "creatorSeedKey": "creator_maxi",
-    "category": "Desayunos"
+    "category": "Postres"
   },
   {
     "seedKey": "post_ensalada_cesar",
     "title": "Ensalada César",
     "description": "La ensalada César se ha convertido en un plato clásico y querido en la gastronomía internacional, ideal para un almuerzo, pero también para una cena, se puede encontrar en numerosos restaurantes y cocinas caseras en todo el mundo.\nPreparación paso a paso\nPaso 1: Lavar la lechuga y cortarla con la mano en trozos grandes.\nPaso 2: Hervir los huevos en una olla con agua durante 5 minutos.\nPaso 3: Cortar la panceta en trozos pequeños y colocarla en una sartén caliente, cocinar hasta que esté crujiente y reservar.\nPaso 4: Cortar la pechuga de pollo en tiras de 1 cm. aprox. Cocinarlas en una sartén con un poco de aceite hasta que estén doradas.\nPaso 5: Quitar los bordes al pan y cortar en cuadraditos pequeños. Hacer los croutons poniéndolos en una sartén caliente o al horno hasta que estén dorados y crujientes.\nPaso 6:La salsa César: colocar las anchoas con el ajo y machacar hasta que quede una pasta. En un bol aparte, batir la yema con la mostaza e integrar. Agregar la pasta de anchoa y ajos hasta que esté bien unida. Salpimentar e ir agregando el aceite en forma de hilo y batiendo enérgicamente hasta que espese. Agregar, por último, el parmesano rallado.\nPaso 6: Colocar en una fuente la lechuga, por encima, el pollo, la panceta y los croutons. Bañar con la salsa César. ",
     "ingredients": "1 planta de lechuga, 1 pechuga de pollo, 1 lonja de panceta, 1 trozo de queso parmesano, 2 huevos, 2 rodajas de pan de molde, Sal y pimienta, 1 yema de huevo, Jugo de medio limón, 1 diente de ajo, 3 anchoas",
-    "difficulty": "facil",
+    "difficulty": "dificil",
     "isPremium": false,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767554122/ensalada-cesar-_jronwg.jpg",
     "creatorSeedKey": "creator_orlando",
@@ -63,6 +63,6 @@
     "isPremium": true,
     "imageUrl": "https://res.cloudinary.com/dolxpfwt3/image/upload/v1767096225/bjigdgmee1u5v0fubuds.jpg",
     "creatorSeedKey": "creator_caro",
-    "category": "Postres"
+    "category": "Cenas"
   }
 ]

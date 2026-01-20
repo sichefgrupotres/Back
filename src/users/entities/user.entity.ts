@@ -1,5 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Post } from 'src/posts/entities/post.entity';
+import { Subscription } from 'src/subscriptions/entities/subscription.entity';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -84,6 +86,15 @@ export class User {
   })
   status?: UserStatus;
 
+  @Column({ name: 'stripe_customer_id', unique: true, nullable: true })
+  stripeCustomerId?: string;
+  // 👇 AQUÍ AGREGAMOS LA COLUMNA QUE FALTABA
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
+  isPremium: boolean;
+
   @Column({ name: 'subscription_id', nullable: true })
   subscriptionId?: number;
 
@@ -114,6 +125,9 @@ export class User {
   })
   blocked: boolean;
 
+  @Column({ nullable: true })
+  avatarUrl?: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -121,6 +135,11 @@ export class User {
   updatedAt: Date;
 
   @OneToMany(() => Post, (post) => post.creator)
-  posts: [];
-  length: number;
+  posts: Post[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.user)
+  subscriptions: Subscription[];
+
+  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  favorites: Favorite[];
 }

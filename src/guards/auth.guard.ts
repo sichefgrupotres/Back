@@ -34,7 +34,9 @@ export class AuthGuard implements CanActivate {
       const expDate = new Date(payload.exp * 1000);
 
       request.user = {
-        ...payload,
+        userId: payload.sub,
+        email: payload.email,
+        role: payload.role,
         expReadable: expDate.toLocaleString('es-AR'),
       };
       return true;

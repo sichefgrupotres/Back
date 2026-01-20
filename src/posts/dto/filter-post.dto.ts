@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEnum,
   IsIn,
@@ -11,13 +11,14 @@ import {
   Max,
   Matches,
   IsBoolean,
+  IsArray,
+  IsUUID,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Difficulty } from '../entities/post.entity';
 import { PostCategory } from '../enums/post-category.enum';
 
 export class FilterPostDto {
-  //Búsqueda global (title, description, ingredients)
   @IsOptional()
   @IsString({ message: 'El texto de búsqueda debe ser una cadena' })
   @ApiProperty({
@@ -48,13 +49,17 @@ export class FilterPostDto {
     description: 'Filtrar recetas premium o no premium',
   })
   isPremium?: boolean;
-  @IsEnum(PostCategory)
+
   @ApiProperty({
     required: false,
     example: 'Almuerzos',
     description: 'Categoria de la receta',
   })
-  category?: PostCategory;
+  @IsOptional()
+  @IsArray()
+  @IsEnum(PostCategory, { each: true })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
+  category?: PostCategory[];
 
   @IsOptional()
   @IsString({ message: 'El nombre del creador debe ser una cadena' })
@@ -104,6 +109,18 @@ export class FilterPostDto {
   orderByDate?: 'asc' | 'desc';
 
   @IsOptional()
+  @IsIn(['asc', 'desc'], {
+    message: 'orderByTitle debe ser asc o desc',
+  })
+  @ApiProperty({
+    required: false,
+    enum: ['asc', 'desc'],
+    example: 'asc',
+    description: 'Ordenar recetas alfabéticamente por título',
+  })
+  orderByTitle?: 'asc' | 'desc';
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -125,4 +142,9 @@ export class FilterPostDto {
     description: 'Cantidad de resultados por página',
   })
   limit?: number;
+
+  @ApiPropertyOptional()
+  @IsUUID()
+  @IsOptional()
+  creatorId?: string;
 }

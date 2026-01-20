@@ -8,5 +8,6 @@ export class UpdateUserDto extends PartialType(
     'lastname',
     'blocked',
     'roleId',
+    'avatarUrl',
   ] as const),
 ) {}

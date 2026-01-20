@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsStrongPassword,
+  IsUrl,
   Length,
   Validate,
 } from 'class-validator';
@@ -81,4 +82,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   blocked?: boolean;
+
+  @IsOptional()
+  @IsUrl()
+  avatarUrl?: string;
 }

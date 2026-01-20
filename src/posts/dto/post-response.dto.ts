@@ -34,5 +34,5 @@ export class PostResponseDto {
   createdAt: Date;
 
   @ApiProperty({ enum: PostCategory })
-  category: PostCategory;
+  category: PostCategory[];
 }
