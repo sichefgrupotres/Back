@@ -168,8 +168,22 @@ export class SubscriptionsService {
       }),
       userId: userId,
     };
+
+    // 1. Guardamos la suscripción en su tabla
     const savedSubscription =
       await this.subscriptionsRepository.upsert(subscriptionData);
+
+    // 👇👇👇 AQUÍ ESTÁ LA SOLUCIÓN 👇👇👇
+    // 2. Actualizamos el flag isPremium del USUARIO basándonos en el estado
+    const premiumStatuses = ['active', 'trialing', 'past_due'];
+    const isPremium = premiumStatuses.includes(stripeSubscription.status);
+
+    await this.userRepository.update(userId, { isPremium: isPremium });
+
+    this.logger.log(
+      `Usuario ${userId} actualizado automáticamente -> isPremium: ${isPremium} (Estado Stripe: ${stripeSubscription.status})`,
+    );
+    // 👆👆👆 FIN DE LA SOLUCIÓN 👆👆👆
 
     this.logger.log(
       `Suscripción ${stripeSubscription.id} actualizada - Status: ${stripeSubscription.status}`,
@@ -183,6 +197,7 @@ export class SubscriptionsService {
     }
     return savedSubscription;
   }
+
   //clientes y planes
   async getOrCreateCustomer(userId: string): Promise<string> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -306,6 +321,11 @@ export class SubscriptionsService {
         SubscriptionStatus.CANCELED,
       );
 
+      // 👇 Aseguramos que se quite el premium si se cancela por impago
+      await this.userRepository.update(subscription.userId, {
+        isPremium: false,
+      });
+
       this.logger.log('Cancelación completada', context);
     } catch (error) {
       const message =
@@ -326,6 +346,8 @@ export class SubscriptionsService {
 
     if (immediately) {
       await this.stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
+      // 👇 Si es inmediata, quitamos premium ya
+      await this.userRepository.update(userId, { isPremium: false });
     } else {
       await this.stripe.subscriptions.update(
         subscription.stripeSubscriptionId,
@@ -338,6 +360,8 @@ export class SubscriptionsService {
         subscription.id,
         true,
       );
+      // Si es al final del periodo, NO quitamos premium todavía.
+      // Stripe mandará un webhook cuando el periodo termine realmente.
     }
 
     return { message: 'Suscripción cancelada correctamente' };
