@@ -71,6 +71,14 @@ export class WebhooksController {
     // Manejar diferentes eventos
     try {
       switch (event.type) {
+        case 'checkout.session.completed': {
+          const session = event.data.object;
+          this.logger.log(`Checkout session completed: ${session.id}`);
+          await this.subscriptionsService.handleCheckoutSessionCompleted(
+            session,
+          );
+          break;
+        }
         case 'customer.subscription.created':
         case 'customer.subscription.updated': {
           const subscription = event.data.object;

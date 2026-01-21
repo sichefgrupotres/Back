@@ -47,32 +47,6 @@ export class SubscriptionsService {
     });
   }
 
-  async getOrCreateCustomer(userId: string): Promise<string> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
-
-    if (user.stripeCustomerId) {
-      return user.stripeCustomerId;
-    }
-
-    const customer = await this.stripe.customers.create({
-      email: user.email,
-      name: `${user.name || ''} ${user.lastname || ''}`.trim(),
-      metadata: { userId: user.id },
-    });
-
-    await this.userRepository.update(userId, {
-      stripeCustomerId: customer.id,
-    });
-    this.logger.log(
-      `Cliente de Stripe creado para usuario ${userId}: ${customer.id}`,
-    );
-    return customer.id;
-  }
-
   // Checkout Session para suscripción
   async createCheckoutSession(userId: string, dto: CreateCheckoutDto) {
     const existingSub =
@@ -121,7 +95,27 @@ export class SubscriptionsService {
     };
   }
 
-  // handler de suscrip que invoca el cont webhook
+  async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+    const subscriptionId = session.subscription as string;
+
+    if (!subscriptionId) {
+      this.logger.warn(
+        `Sesión de checkout ${session.id} no contiene una suscripción.`,
+      );
+      return;
+    }
+
+    this.logger.log(`Finalizando checkout para suscripción: ${subscriptionId}`);
+
+    // Recupera suscripción para metadatos y fechas
+    const subscription =
+      await this.stripe.subscriptions.retrieve(subscriptionId);
+
+    // Usa lógica de upsert que ya maneja el userId de la metadata
+    return await this.handleSubscriptionEvent(subscription);
+  }
+
+  // procesamiento eventos y persistencia
   async handleSubscriptionEvent(
     stripeSubscription: Stripe.Subscription,
   ): Promise<Subscription> {
@@ -188,6 +182,86 @@ export class SubscriptionsService {
       await this.cancelSubscriptionDueToNonPayment(stripeSubscription.id);
     }
     return savedSubscription;
+  }
+  //clientes y planes
+  async getOrCreateCustomer(userId: string): Promise<string> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    if (user.stripeCustomerId) {
+      return user.stripeCustomerId;
+    }
+
+    const customer = await this.stripe.customers.create({
+      email: user.email,
+      name: `${user.name || ''} ${user.lastname || ''}`.trim(),
+      metadata: { userId: user.id },
+    });
+
+    await this.userRepository.update(userId, {
+      stripeCustomerId: customer.id,
+    });
+    this.logger.log(
+      `Cliente de Stripe creado para usuario ${userId}: ${customer.id}`,
+    );
+    return customer.id;
+  }
+
+  private getPriceIdForPlan(plan: SubscriptionPlan): string {
+    const priceId = this.configService.get<string>(
+      plan === SubscriptionPlan.MONTHLY
+        ? 'STRIPE_PRICE_ID_MONTHLY'
+        : 'STRIPE_PRICE_ID_YEARLY',
+    );
+    if (!priceId) {
+      throw new BadRequestException(
+        `Price ID no configurado para el plan ${plan}`,
+      );
+    }
+
+    return priceId;
+  }
+
+  async getUserActiveSubscription(
+    userId: string,
+  ): Promise<ActiveSubscriptionResponseDto | null> {
+    const subscription =
+      await this.subscriptionsRepository.findActiveByUserId(userId);
+
+    if (!subscription) {
+      return null;
+    }
+
+    return {
+      plan: subscription.plan,
+      status: subscription.status as 'active' | 'trialing' | 'past_due',
+      period: {
+        start: subscription.currentPeriodStart,
+        end: subscription.currentPeriodEnd,
+      },
+      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+    };
+  }
+
+  async getAllSubscriptionsForAdmin(): Promise<SubscriptionResponseDto[]> {
+    const subscriptions = await this.subscriptionsRepository.findAllForAdmin();
+    return subscriptions.map((sub) => {
+      return {
+        plan: sub.plan,
+        status: sub.status,
+        period: {
+          start: sub.currentPeriodStart,
+          end: sub.currentPeriodEnd,
+        },
+        cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
+        userEmail: sub.user?.email || 'Email no disponible',
+        userId: sub.userId,
+        createdAt: sub.createdAt,
+      };
+    });
   }
 
   private async cancelSubscriptionDueToNonPayment(
@@ -267,60 +341,6 @@ export class SubscriptionsService {
     }
 
     return { message: 'Suscripción cancelada correctamente' };
-  }
-
-  async getUserActiveSubscription(
-    userId: string,
-  ): Promise<ActiveSubscriptionResponseDto | null> {
-    const subscription =
-      await this.subscriptionsRepository.findActiveByUserId(userId);
-
-    if (!subscription) {
-      return null;
-    }
-
-    return {
-      plan: subscription.plan,
-      status: subscription.status as 'active' | 'trialing' | 'past_due',
-      period: {
-        start: subscription.currentPeriodStart,
-        end: subscription.currentPeriodEnd,
-      },
-      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
-    };
-  }
-
-  async getAllSubscriptionsForAdmin(): Promise<SubscriptionResponseDto[]> {
-    const subscriptions = await this.subscriptionsRepository.findAllForAdmin();
-    return subscriptions.map((sub) => {
-      return {
-        plan: sub.plan,
-        status: sub.status,
-        period: {
-          start: sub.currentPeriodStart,
-          end: sub.currentPeriodEnd,
-        },
-        cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
-        userEmail: sub.user?.email || 'Email no disponible',
-        userId: sub.userId,
-        createdAt: sub.createdAt,
-      };
-    });
-  }
-
-  private getPriceIdForPlan(plan: SubscriptionPlan): string {
-    const priceId = this.configService.get<string>(
-      plan === SubscriptionPlan.MONTHLY
-        ? 'STRIPE_PRICE_ID_MONTHLY'
-        : 'STRIPE_PRICE_ID_YEARLY',
-    );
-    if (!priceId) {
-      throw new BadRequestException(
-        `Price ID no configurado para el plan ${plan}`,
-      );
-    }
-
-    return priceId;
   }
 
   async updateSubscriptionPlan(

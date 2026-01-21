@@ -65,16 +65,13 @@ import { FavoritesModule } from './favorites/favorites.module'; // 👈 Importar
     PostsModule,
     AuthModule,
     AdminModule,
-
     NotificationsModule,
-
     TutorialsModule,
     SubscriptionsModule,
-
     WebhooksModule,
     ChatModule,
     PushNotificationsModule,
-    FavoritesModule
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -83,18 +80,20 @@ export class AppModule implements OnApplicationBootstrap {
   constructor(
     private readonly usersService: UsersService,
     private readonly postsService: PostsService,
-  ) { }
+  ) {}
 
   async onApplicationBootstrap() {
     try {
-      // Intentamos cargar datos semilla, si falla no importa
       await this.usersService.addUsers();
       console.log('Usuarios verificados/agregados');
 
       await this.postsService.addPosts();
       console.log('Posts verificados/agregados');
     } catch (error) {
-      console.warn('Omitiendo carga de datos semilla (ya existen o error):', error);
+      console.warn(
+        'Omitiendo carga de datos semilla (ya existen o error):',
+        error,
+      );
     }
   }
 }
