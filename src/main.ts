@@ -3,18 +3,12 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { loggerGlobal } from './middlawares/logger.middlaware';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { json, raw, Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.originalUrl === '/webhooks/stripe') {
-      raw({ type: 'application/json' })(req, res, next);
-    } else {
-      json()(req, res, next);
-    }
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
   });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

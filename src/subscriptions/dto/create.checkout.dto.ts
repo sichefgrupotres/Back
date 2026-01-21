@@ -14,7 +14,7 @@ export class CreateCheckoutDto {
 
   @ApiProperty({
     description: 'URL de éxito',
-    example: 'http://localhost:3000/subscription/success',
+    example: 'https://si-chef.vercel.app/subscription/success',
   })
   @IsString()
   @IsNotEmpty()
@@ -25,7 +25,7 @@ export class CreateCheckoutDto {
 
   @ApiProperty({
     description: 'URL de cancelación',
-    example: 'http://localhost:3000/subscription/cancel',
+    example: 'https://si-chef.vercel.app/subscription/cancel',
   })
   @IsString()
   @IsNotEmpty()
