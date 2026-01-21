@@ -59,7 +59,11 @@ export class PostsService {
     }
 
     const postCreated = await this.postsRepository.create(
-      { ...post, statusPost: moderationResult.statusPost },
+      {
+        ...post,
+        imageUrl: response.secure_url,
+        statusPost: moderationResult.statusPost,
+      } as any,
       fullUser,
     );
     if (!postCreated) return 'Error al crear el post';
@@ -89,7 +93,7 @@ export class PostsService {
       isPremium: post.isPremium,
     };
     return {
-      message:moderationResult.alertMessage ,
+      message: moderationResult.alertMessage,
       statusPost: moderationResult.statusPost,
       imageUrl: response.secure_url,
       post: postCreate,
