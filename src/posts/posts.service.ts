@@ -156,13 +156,20 @@ export class PostsService {
     return this.postsRepository.remove(id);
   }
 
-  async findByCreator(userId: string, filters: FilterPostDto) {
-    return this.postsRepository.findAll({ ...filters, creatorId: userId });
+  async findByCreator(
+    creatorId: string,
+    filters: FilterPostDto,
+  ): Promise<PaginatedResponse<PostResponseDto>> {
+    return this.findAll(
+      {
+        ...filters,
+        creatorId,
+      },
+      creatorId,
+    );
   }
 
-  // 👇👇 MÉTODO NUEVO: Maneja la lógica de agregar/quitar con límite 👇👇
   async toggleFavorite(postId: string, userId: string) {
-    // 1. Verificamos si ya existe (Quitar like)
     const existingFavorite = await this.favoritesRepository.findOne({
       where: {
         post: { id: postId },
@@ -175,12 +182,9 @@ export class PostsService {
       return { isFavorite: false, message: 'Eliminado de favoritos' };
     }
 
-    // 2. Si es agregar like, verificamos límites
     const user = await this.usersRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    // Revisamos si es VIP (Premium, Admin o Creador)
-    // Ajusta 'CREATOR' / 'ADMIN' según como lo tengas en tu Enum exactamente
     const isVip =
       user.isPremium || user.roleId === 'ADMIN' || user.roleId === 'CREATOR';
 
@@ -193,8 +197,6 @@ export class PostsService {
         throw new BadRequestException('Límite de favoritos alcanzado');
       }
     }
-
-    // 3. Crear favorito
     const newFavorite = this.favoritesRepository.create({
       post: { id: postId },
       user: { id: userId },
