@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { loggerGlobal } from './middlawares/logger.middlaware';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as fs from 'fs';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -35,5 +37,15 @@ async function bootstrap() {
   const port = process.env.PORT || 3001;
 
   await app.listen(port, '0.0.0.0');
+
+  const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+
+  if (credentialsJson) {
+    const credentialsPath = path.join(process.cwd(), 'google-credentials.json');
+
+    fs.writeFileSync(credentialsPath, credentialsJson);
+
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
+  }
 }
 bootstrap();
