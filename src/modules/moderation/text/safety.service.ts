@@ -47,8 +47,9 @@ export class SafetyService {
   constructor() {
     this.vertexAI = new VertexAI({
       project: process.env.GOOGLE_PROJECT_ID ?? '',
-      location: process.env.GOOGLE_LOCATION ?? '',
+      location: process.env.GOOGLE_LOCATION ?? 'us-central1',
     });
+
     this.model = this.vertexAI.getGenerativeModel({
       model: 'gemini-2.0-flash-001',
     });
