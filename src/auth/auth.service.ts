@@ -29,7 +29,7 @@ export class AuthService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async signinService(credentials: LoginUserDto) {
     const { email, password } = credentials;
@@ -44,6 +44,7 @@ export class AuthService {
       throw new ForbiddenException('Usuario bloqueado');
     }
 
+    // Caso: Usuario sin contraseña (Google login previo pero intentando loguear local)
     if (!user.password) {
       const token = this.jwtService.sign({
         sub: user.id,
@@ -59,6 +60,7 @@ export class AuthService {
           email: user.email,
           role: user.roleId,
           avatarUrl: user.avatarUrl,
+          isPremium: user.isPremium, // 👈 AGREGADO: Dato vital
         },
         token,
       };
@@ -88,6 +90,7 @@ export class AuthService {
         email: user.email,
         role: user.roleId,
         avatarUrl: user.avatarUrl ?? null,
+        isPremium: user.isPremium, // 👈 AGREGADO: Dato vital
       },
       token,
     };
@@ -120,6 +123,7 @@ export class AuthService {
           status: UserStatus.ACTIVE,
           avatarUrl: dto.avatarUrl ?? undefined,
           password: null,
+          isPremium: false, // Por defecto al crear
         });
 
         await this.usersRepository.save(user);
@@ -154,6 +158,7 @@ export class AuthService {
         email: user.email,
         role: user.roleId,
         avatarUrl: user.avatarUrl,
+        isPremium: user.isPremium, // 👈 AGREGADO: Dato vital
       },
       token,
     };

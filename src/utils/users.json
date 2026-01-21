@@ -8,7 +8,6 @@
     "roleId": "ADMIN",
     "provider": "local"
   },
-
   {
     "seedKey": "user_ana",
     "name": "Ana",
@@ -54,7 +53,6 @@
     "roleId": "USER",
     "provider": "local"
   },
-
   {
     "seedKey": "creator_yeison",
     "name": "Yeison",
