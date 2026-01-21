@@ -65,7 +65,7 @@ export class PostModerationService {
         imageResult?.status === PostStatus.BLOCKED
           ? imageResult.category
           : textResult.category;
-      alertMessage = `Este post fue bloqueado porque presentaba contenido ${categoryFinal}.`;
+      alertMessage = `Este post fue creado pero bloqueado porque presentaba contenido ${categoryFinal}.`;
 
       this.eventEmitter.emit(
         'post.blocked',
@@ -85,8 +85,7 @@ export class PostModerationService {
         imageResult?.status === PostStatus.NEEDS_REVIEW
           ? imageResult.category
           : textResult.category;
-      alertMessage = `Su posteo presenta contenido ${categoryFinal}, será revisado por la app.`;
-      console.log(`category FINAL : ${categoryFinal}`);
+      alertMessage = `Su posteo fue creado pero presenta contenido ${categoryFinal}, será revisado por la app.`;
       this.eventEmitter.emit(
         'post.review',
         new PostEvent(
