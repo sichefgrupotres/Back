@@ -11,7 +11,6 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from 'src/users/entities/user.entity';
 import { FilterPostDto } from './dto/filter-post.dto';
 import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
-import { parseLocalDate } from 'src/utils/date.utils';
 import postsData from '../utils/recipes.json';
 import { PostSeed } from './posts.seed.type';
 
@@ -37,91 +36,33 @@ export class PostsRepository {
   }
 
   async findAll(filters: FilterPostDto): Promise<PaginatedResponse<Post>> {
-    const {
-      search,
-      difficulty,
-      creatorName,
-      fromDate,
-      toDate,
-      orderByTitle,
-      orderByDate,
-      page,
-      limit,
-      isPremium,
-      category,
-      creatorId,
-    } = filters;
-
-    const query = this.postsRepository
+    const qb = this.postsRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.creator', 'creator');
+    // .loadRelationCountAndMap('post.favoritesCount', 'post.favoritedBy');
 
-    if (creatorId) {
-      query.andWhere('post.creatorId = :creatorId', { creatorId });
-    }
-
-    // Filtros
-    if (fromDate)
-      query.andWhere('post.createdAt >= :fromDate', {
-        fromDate: parseLocalDate(fromDate),
+    if (filters.creatorId) {
+      qb.andWhere('creator.id = :creatorId', {
+        creatorId: filters.creatorId,
       });
-
-    if (toDate)
-      query.andWhere('post.createdAt <= :toDate', {
-        toDate: parseLocalDate(toDate, true),
-      });
-    if (search?.trim())
-      query.andWhere(
-        `(post.title ILIKE :search OR post.description ILIKE :search OR post.ingredients ILIKE :search)`,
-        { search: `%${search.trim()}%` },
-      );
-    if (difficulty)
-      query.andWhere('post.difficulty = :difficulty', { difficulty });
-    if (isPremium !== undefined)
-      query.andWhere('post.isPremium = :isPremium', { isPremium });
-    if (category) query.andWhere('post.category = :category', { category });
-
-    if (creatorName) {
-      const parts = creatorName.trim().split(/\s+/);
-      if (parts.length === 1) {
-        query.andWhere(
-          '(creator.name ILIKE :term OR creator.lastname ILIKE :term)',
-          { term: `%${parts[0]}%` },
-        );
-      } else {
-        query.andWhere(
-          '(creator.name ILIKE :name AND creator.lastname ILIKE :lastname)',
-          {
-            name: `%${parts[0]}%`,
-            lastname: `%${parts[1]}%`,
-          },
-        );
-      }
     }
 
-    if (orderByTitle) {
-      query
-        .addSelect('LOWER(post.title)', 'title_lower')
-        .orderBy('title_lower', orderByTitle.toUpperCase() as 'ASC' | 'DESC');
-    } else {
-      query.addOrderBy(
-        'post.createdAt',
-        orderByDate === 'asc' ? 'ASC' : 'DESC',
-      );
-    }
-    const pageNumber = page ?? 1;
-    const pageSize = limit ?? 5;
-    query.skip((pageNumber - 1) * pageSize).take(pageSize);
+    const page = Number(filters.page ?? 1);
+    const limit = Number(filters.limit ?? 10);
 
-    const [data, total] = await query.getManyAndCount();
+    qb.orderBy('post.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
 
     return {
       data,
       meta: {
-        page: pageNumber,
-        limit: pageSize,
         total,
-        totalPages: Math.ceil(total / pageSize),
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
     };
   }
@@ -143,6 +84,7 @@ export class PostsRepository {
         }
 
         const post = this.postsRepository.create({
+          seedKey: postData.seedKey,
           title: postData.title,
           description: postData.description,
           ingredients: postData.ingredients,
@@ -158,17 +100,16 @@ export class PostsRepository {
           .insert()
           .into(Post)
           .values(post)
-          .onConflict(
-            `
-          ("seedKey")
-          DO UPDATE SET
-            description = EXCLUDED.description,
-            ingredients = EXCLUDED.ingredients,
-            difficulty = EXCLUDED.difficulty,
-            "isPremium" = EXCLUDED."isPremium",
-            "imageUrl" = EXCLUDED."imageUrl",
-            "updated_at" = DEFAULT
-        `,
+          .orUpdate(
+            [
+              'description',
+              'ingredients',
+              'difficulty',
+              'isPremium',
+              'imageUrl',
+              'updated_at',
+            ],
+            ['seedKey'],
           )
           .execute();
       }),
