@@ -13,7 +13,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
-  UnauthorizedException, // 👈 1. Importamos esto
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -26,7 +26,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  // 👇 MÉTODO CORREGIDO PARA EL CHAT
+  // 1️⃣ RUTA PROFILE PRIMERO (Para evitar error de UUID)
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@Req() req) {
+    const userId = req.user.sub || req.user.userId || req.user.id;
+    return this.usersService.findOne(userId);
+  }
+
+  // 2️⃣ RUTA CHAT LIST SEGUNDA
   @Get('chat-list')
   @UseGuards(JwtAuthGuard)
   async getChatUsers(@Req() req) {
@@ -35,18 +43,18 @@ export class UsersController {
 
     const users = await this.usersService.findAllChatUsers(userId);
 
-    // Ahora sí TypeScript estará feliz sin trucos
     return users.map((u) => ({
       id: u.id,
       name: `${u.name || ''} ${u.lastname || ''}`.trim(),
       email: u.email,
       avatar: u.avatarUrl || 'https://ui-avatars.com/api/?name=' + u.name,
-      role: u.roleId,     // 👈 OJO: Usamos roleId porque así se llama en tu entidad
-      isPremium: u.isPremium // 👈 Ahora esto existe y funcionará perfecto
+      role: u.roleId,
+      isPremium: u.isPremium // Esto ya debería funcionar
     }));
   }
-  // 👆 FIN DEL CAMBIO
 
+  // 3️⃣ RUTA COMODÍN (:id) AL FINAL
+  // Si la pones antes, se "come" las peticiones a 'profile' y 'chat-list'
   @ApiOperation({
     summary: 'Buscar a un usuario por su Id',
   })
@@ -57,7 +65,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  // ... (Resto de tu código: uploadAvatar, create, findAll, etc. sigue igual) ...
+  // ... Resto de métodos (uploadAvatar, register, findAll, etc.) ...
 
   @Post('avatar')
   @UseGuards(JwtAuthGuard)
