@@ -81,7 +81,7 @@ export class Post {
     nullable: true,
     unique: true,
   })
-  seedKey?: string;
+  seedKey: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
