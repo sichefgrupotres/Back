@@ -29,36 +29,37 @@ import { FavoritesModule } from './favorites/favorites.module'; // 👈 Importar
 
     // ✅ MODO DESARROLLO (TU COMPUTADORA) - ACTIVADO
 
-    // TypeOrmModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (config: ConfigService) => ({
-    //     type: 'postgres',
-    //     host: config.get('DB_HOST'),
-    //     port: Number(config.get('DB_PORT')),
-    //     username: config.get('DB_USER'),
-    //     password: config.get('DB_PASSWORD'),
-    //     database: config.get('DB_NAME'),
-    //     autoLoadEntities: true,
-    //     synchronize: true, // true en local para que cree las tablas
-    //     logging: true,
-    //   }),
-    // }),
-
-    // ☁️ MODO PRODUCCION (RENDER) - COMENTADO PARA QUE NO FALLE LOCALMENTE
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        url: config.get<string>('DATABASE_URL'),
+        host: config.get('DB_HOST'),
+        port: Number(config.get('DB_PORT')),
+        username: config.get('DB_USER'),
+        password: config.get('DB_PASSWORD'),
+        database: config.get('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
-        ssl: { rejectUnauthorized: false },
+        synchronize: true, // true en local para que cree las tablas
         logging: true,
       }),
     }),
+
+    // ☁️ MODO PRODUCCION (RENDER) - COMENTADO PARA QUE NO FALLE LOCALMENTE
+
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (config: ConfigService) => ({
+    //     type: 'postgres',
+    //     url: config.get<string>('DATABASE_URL'),
+    //     autoLoadEntities: true,
+    //     synchronize: true,
+    //     ssl: { rejectUnauthorized: false },
+    //     logging: true,
+    //   }),
+    // }),
+
 
     UsersModule,
     PostsModule,
