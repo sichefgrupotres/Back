@@ -44,13 +44,17 @@ export class AuthService {
       throw new ForbiddenException('Usuario bloqueado');
     }
 
-    // Caso: Usuario sin contraseña (Google login previo pero intentando loguear local)
+    // Definimos el payload una sola vez para reutilizar lógica
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.roleId,
+      isPremium: user.isPremium, // 👈 ESTO FALTABA EN EL TOKEN
+    };
+
+    // Caso: Usuario sin contraseña (Google login previo)
     if (!user.password) {
-      const token = this.jwtService.sign({
-        sub: user.id,
-        email: user.email,
-        role: user.roleId,
-      });
+      const token = this.jwtService.sign(payload); // Usamos el payload completo
 
       return {
         user: {
@@ -60,7 +64,7 @@ export class AuthService {
           email: user.email,
           role: user.roleId,
           avatarUrl: user.avatarUrl,
-          isPremium: user.isPremium, // 👈 AGREGADO: Dato vital
+          isPremium: user.isPremium,
         },
         token,
       };
@@ -76,11 +80,8 @@ export class AuthService {
       throw new UnauthorizedException('Email y/o contraseña incorrecto/s');
     }
 
-    const token = this.jwtService.sign({
-      sub: user.id,
-      email: user.email,
-      role: user.roleId,
-    });
+    // Generamos token normal
+    const token = this.jwtService.sign(payload); // 👈 Usamos el payload con isPremium
 
     return {
       user: {
@@ -90,7 +91,7 @@ export class AuthService {
         email: user.email,
         role: user.roleId,
         avatarUrl: user.avatarUrl ?? null,
-        isPremium: user.isPremium, // 👈 AGREGADO: Dato vital
+        isPremium: user.isPremium,
       },
       token,
     };
@@ -123,7 +124,7 @@ export class AuthService {
           status: UserStatus.ACTIVE,
           avatarUrl: dto.avatarUrl ?? undefined,
           password: null,
-          isPremium: false, // Por defecto al crear
+          isPremium: false,
         });
 
         await this.usersRepository.save(user);
@@ -142,6 +143,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.roleId,
+      isPremium: user.isPremium, // 👈 ESTO FALTABA AQUÍ TAMBIÉN
     };
 
     const token = this.jwtService.sign(payload);
@@ -158,7 +160,7 @@ export class AuthService {
         email: user.email,
         role: user.roleId,
         avatarUrl: user.avatarUrl,
-        isPremium: user.isPremium, // 👈 AGREGADO: Dato vital
+        isPremium: user.isPremium,
       },
       token,
     };
