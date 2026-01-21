@@ -4,11 +4,10 @@
     "name": "Admin",
     "lastname": "SiChef",
     "email": "sichefgrupotres@gmail.com",
-    "password": "sichef2025",
+    "password": "Sichef2025",
     "roleId": "ADMIN",
     "provider": "local"
   },
-
   {
     "seedKey": "user_ana",
     "name": "Ana",
@@ -54,7 +53,6 @@
     "roleId": "USER",
     "provider": "local"
   },
-
   {
     "seedKey": "creator_yeison",
     "name": "Yeison",
