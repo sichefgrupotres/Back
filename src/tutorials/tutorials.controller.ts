@@ -147,4 +147,9 @@ export class TutorialsController {
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.tutorialsService.remove(id);
   }
+
+  @Get('by-recipe/:id')
+  findByRecipe(@Param('id') id: string) {
+    return this.tutorialsService.findByRecipe(id);
+  }
 }
