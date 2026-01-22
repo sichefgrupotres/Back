@@ -60,7 +60,6 @@ import { FavoritesModule } from './favorites/favorites.module'; // 👈 Importar
       }),
     }),
 
-
     UsersModule,
     PostsModule,
     AuthModule,
