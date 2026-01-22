@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   BadRequestException,
   Body,
@@ -146,5 +147,10 @@ export class TutorialsController {
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.tutorialsService.remove(id);
+  }
+
+  @Get('by-recipe/:id')
+  findByRecipe(@Param('id') id: string) {
+    return this.tutorialsService.findByRecipe(id);
   }
 }

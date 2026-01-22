@@ -80,7 +80,7 @@ export class AppModule implements OnApplicationBootstrap {
   constructor(
     private readonly usersService: UsersService,
     private readonly postsService: PostsService,
-  ) { }
+  ) {}
 
   async onApplicationBootstrap() {
     try {

@@ -19,10 +19,12 @@ import { PostModerationService } from '../modules/moderationPost/post-moderation
 import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class PostsService {
   constructor(
+    private readonly dataSource: DataSource,
     private postsRepository: PostsRepository,
     private readonly uploadImageClou: UploadImagenClou,
     @InjectRepository(User)
@@ -32,7 +34,14 @@ export class PostsService {
     @InjectRepository(Favorite)
     private readonly favoritesRepository: Repository<Favorite>,
   ) {}
-
+  async cleanDatabase() {
+    await this.dataSource.query(`
+      TRUNCATE TABLE favorite RESTART IDENTITY CASCADE;
+      TRUNCATE TABLE posts RESTART IDENTITY CASCADE;
+      TRUNCATE TABLE messages RESTART IDENTITY CASCADE;
+      TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+    `);
+  }
   async create(post: CreatePostDto, file: Express.Multer.File, user: any) {
     const userId = user.userId || user.id;
     if (!userId) {

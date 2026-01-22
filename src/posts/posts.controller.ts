@@ -49,6 +49,12 @@ export class PostsController {
     private readonly favoritesService: FavoritesService,
   ) {}
 
+  @Post('admin/clean-db')
+  async cleanDb() {
+    await this.postsService.cleanDatabase();
+    return { message: 'Base de datos limpiada' };
+  }
+
   @ApiOperation({
     summary: 'Creacion de un posteo',
   })
