@@ -67,7 +67,6 @@ export class PostsService {
       throw new BadRequestException('Error al subir imagen: ' + err.message);
     }
 
-    
     if (moderationResult.statusPost === PostStatus.BLOCKED) {
       this.eventEmitter.emit(
         'post.blocked',
@@ -93,7 +92,7 @@ export class PostsService {
       fullUser,
     );
     if (!postCreated) return 'Error al crear el post';
-    
+
     const postCreate = {
       title: post.title,
       description: post.description,
@@ -146,6 +145,8 @@ export class PostsService {
       imageUrl: post.imageUrl,
       createdAt: post.createdAt,
       creatorName: `${post.creator?.name ?? 'Desconocido'} ${post.creator?.lastname ?? ''}`,
+      avatarUrl: post.creator?.avatarUrl ?? '',
+      creatorId: post.creator?.id ?? '',
       isFavorite: likedPostIds.has(post.id),
     }));
 

@@ -88,7 +88,6 @@ export class User {
 
   @Column({ name: 'stripe_customer_id', unique: true, nullable: true })
   stripeCustomerId?: string;
-  // 👇 AQUÍ AGREGAMOS LA COLUMNA QUE FALTABA
   @Column({
     type: 'boolean',
     default: false,
