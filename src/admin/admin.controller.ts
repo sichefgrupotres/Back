@@ -6,6 +6,7 @@ import {
   Body,
   // UseGuards,
   Query,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 // import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -33,6 +34,14 @@ export class AdminController {
   }
 
   @ApiOperation({
+    summary: 'Obtener cantidad de posts por creador',
+  })
+  @Get('users-posts')
+  getUsersPosts() {
+    return this.adminService.getUsersPosts();
+  }
+
+  @ApiOperation({
     summary: 'Obtener usuarios por id',
   })
   @Get('users/:id')
@@ -57,15 +66,21 @@ export class AdminController {
     return this.adminService.updateUserRole(id, dto.role);
   }
 
-  @ApiOperation({
-    summary: 'Bloquear la cuenta de un usuario',
-  })
+  @ApiOperation({ summary: 'Bloquear la cuenta de un usuario' })
   @ApiBody({ type: BlockUserDto })
   @Patch('users/:id/block')
-  blockUser(@Param('id') id: string, @Body() dto: BlockUserDto) {
-    return this.adminService.blockUser(id, dto.blocked);
-  }
+  async blockUser(@Param('id') id: string, @Body() dto: BlockUserDto) {
+    await this.adminService.blockUser(id, dto.blocked);
 
+    if (dto.blocked) {
+      // Lanza un error 403 que NextAuth puede detectar
+      throw new ForbiddenException({ error: 'USER_BLOCKED' });
+    }
+
+    return {
+      message: `Usuario ${dto.blocked ? 'bloqueado' : 'desbloqueado'} correctamente`,
+    };
+  }
   @ApiOperation({
     summary: 'Obtener estadísticas del sistema',
   })
