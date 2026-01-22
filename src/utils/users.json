@@ -86,7 +86,7 @@
     "lastname": "Zarraga",
     "email": "orlandozarraga31@hotmail.com",
     "password": "Orlando2026$",
-    "roleId": "CREATOR",
+    "roleId": "ADMIN",
     "provider": "local"
   },
   {
@@ -95,7 +95,7 @@
     "lastname": "Ariza",
     "email": "carolinaarizat93@gmail.com",
     "password": "Caro2026$",
-    "roleId": "CREATOR",
+    "roleId": "ADMIN",
     "provider": "local"
   }
 ]
