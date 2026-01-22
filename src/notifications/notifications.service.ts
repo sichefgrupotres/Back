@@ -10,7 +10,7 @@ export class NotificationsService {
   constructor(
     private readonly sendgrid: SendgridProvider,
     private readonly userRepository: UsersRepository,
-  ) {}
+  ) { }
 
   @OnEvent('user.registered', { async: true })
   async handleUserRegistered(event: UserRegisteredEvent): Promise<void> {
@@ -300,7 +300,7 @@ export class NotificationsService {
         <body>
           <div class="container">
             <div class="header">
-              <img src="https://res.cloudinary.com/dolxpfwt3/image/upload/v1767670185/ux3vpzuzfsyefgaimezi.png" alt="SiChef Logo" />
+              <img src="https://res.cloudinary.com/dolxpfwt3/image/upload/v1768880003/Logo_phn7hm.png" alt="SiChef Logo" />
             </div>
             <div class="content">
               <h1>Tu publicación está en revisión</h1>
@@ -352,7 +352,7 @@ export class NotificationsService {
         <body>
           <div class="container">
             <div class="header">
-              <img src="https://res.cloudinary.com/dolxpfwt3/image/upload/v1767670185/ux3vpzuzfsyefgaimezi.png" alt="SiChef Logo" />
+              <img src="https://res.cloudinary.com/dolxpfwt3/image/upload/v1768880003/Logo_phn7hm.png" alt="SiChef Logo" />
             </div>
             <div class="content">
               <h1>Publicación en revisión</h1>

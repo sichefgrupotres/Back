@@ -58,15 +58,7 @@ export class PostsService {
       throw new BadRequestException('Error al subir imagen: ' + err.message);
     }
 
-    const postCreated = await this.postsRepository.create(
-      {
-        ...post,
-        imageUrl: response.secure_url,
-        statusPost: moderationResult.statusPost,
-      } as any,
-      fullUser,
-    );
-    if (!postCreated) return 'Error al crear el post';
+    
     if (moderationResult.statusPost === PostStatus.BLOCKED) {
       this.eventEmitter.emit(
         'post.blocked',
@@ -83,6 +75,16 @@ export class PostsService {
         new PostEvent(post.title, response.secure_url, user.email),
       );
     }
+    const postCreated = await this.postsRepository.create(
+      {
+        ...post,
+        imageUrl: response.secure_url,
+        statusPost: moderationResult.statusPost,
+      } as any,
+      fullUser,
+    );
+    if (!postCreated) return 'Error al crear el post';
+    
     const postCreate = {
       title: post.title,
       description: post.description,
