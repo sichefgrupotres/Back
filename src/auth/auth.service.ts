@@ -29,7 +29,7 @@ export class AuthService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async signinService(credentials: LoginUserDto) {
     const { email, password } = credentials;
@@ -41,7 +41,10 @@ export class AuthService {
     }
 
     if (user.blocked) {
-      throw new ForbiddenException('Usuario bloqueado');
+      return {
+        error: 'USER_BLOCKED',
+        message: 'Usuario bloqueado',
+      };
     }
 
     // Definimos el payload una sola vez para reutilizar lógica

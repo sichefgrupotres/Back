@@ -1,10 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { Role, User } from 'src/users/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserPostsDto } from './dto/user-post.dto';
+import { Post } from 'src/posts/entities/post.entity';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>, // <--- esto es clave
+  ) {}
 
   async getUsers(filters: {
     email?: string;
@@ -58,5 +66,37 @@ export class AdminService {
       totalUsers: await this.usersService.count(),
       timestamp: new Date(),
     };
+  }
+
+  async getUsersPosts(): Promise<UserPostsDto[]> {
+    const users = await this.usersService.findUsersByRole(Role.CREATOR);
+
+    const result: UserPostsDto[] = [];
+
+    for (const user of users) {
+      const posts = await this.postRepository.find({
+        where: { creator: { id: user.id } },
+        order: { createdAt: 'ASC' },
+        select: ['createdAt'],
+      });
+
+      const postsByDate: Record<string, number> = {};
+      posts.forEach((p) => {
+        const date = p.createdAt.toISOString().slice(0, 10);
+        postsByDate[date] = (postsByDate[date] || 0) + 1;
+      });
+
+      const postsArray = Object.entries(postsByDate).map(([date, count]) => ({
+        date,
+        count,
+      }));
+
+      result.push({
+        username: user.name ?? 'Sin nombre',
+        posts: postsArray,
+      });
+    }
+
+    return result;
   }
 }
