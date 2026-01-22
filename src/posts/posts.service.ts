@@ -34,7 +34,6 @@ export class PostsService {
     @InjectRepository(Favorite)
     private readonly favoritesRepository: Repository<Favorite>,
   ) {}
-
   async cleanDatabase() {
     await this.dataSource.query(`
       TRUNCATE TABLE favorite RESTART IDENTITY CASCADE;
@@ -43,7 +42,6 @@ export class PostsService {
       TRUNCATE TABLE users RESTART IDENTITY CASCADE;
     `);
   }
-
   async create(post: CreatePostDto, file: Express.Multer.File, user: any) {
     const userId = user.userId || user.id;
     if (!userId) {
