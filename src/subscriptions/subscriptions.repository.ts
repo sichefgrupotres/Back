@@ -116,7 +116,6 @@ export class SubscriptionsRepository {
     }
   }
 
-  // Actualizar estado de suscripción
   async updateStatus(
     subscriptionId: string,
     status: SubscriptionStatus,

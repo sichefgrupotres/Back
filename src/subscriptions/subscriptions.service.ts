@@ -47,7 +47,6 @@ export class SubscriptionsService {
     });
   }
 
-  // Checkout Session para suscripción
   async createCheckoutSession(userId: string, dto: CreateCheckoutDto) {
     const existingSub =
       await this.subscriptionsRepository.findActiveByUserId(userId);
@@ -107,15 +106,12 @@ export class SubscriptionsService {
 
     this.logger.log(`Finalizando checkout para suscripción: ${subscriptionId}`);
 
-    // Recupera suscripción para metadatos y fechas
     const subscription =
       await this.stripe.subscriptions.retrieve(subscriptionId);
 
-    // Usa lógica de upsert que ya maneja el userId de la metadata
     return await this.handleSubscriptionEvent(subscription);
   }
 
-  // procesamiento eventos y persistencia
   async handleSubscriptionEvent(
     stripeSubscription: Stripe.Subscription,
   ): Promise<Subscription> {
@@ -152,8 +148,6 @@ export class SubscriptionsService {
 
     const subscriptionData = {
       stripeSubscriptionId: stripeSubscription.id,
-      // ❌ ELIMINADO: stripeCustomerId no existe en la DB.
-      // TypeScript se quejará, pero lo solucionamos abajo con 'as any'.
 
       stripePriceId: subscriptionItem.price.id,
       status: stripeSubscription.status as SubscriptionStatus,
@@ -171,21 +165,17 @@ export class SubscriptionsService {
       userId: userId,
     };
 
-    // 👇👇👇 EL CAMBIO CLAVE 👇👇👇
-    // Usamos 'as any' para forzar a TypeScript a aceptar el objeto sin stripeCustomerId
-    // Esto permite compilar SIN el dato que hacía explotar la base de datos.
     const savedSubscription = await this.subscriptionsRepository.upsert(
       subscriptionData as any,
     );
 
-    // 2. Actualizamos el flag isPremium del USUARIO basándonos en el estado
     const premiumStatuses = ['active', 'trialing', 'past_due'];
     const isPremium = premiumStatuses.includes(stripeSubscription.status);
 
     await this.userRepository.update(userId, { isPremium: isPremium });
 
     this.logger.log(
-      `✅ Usuario ${userId} actualizado automáticamente -> isPremium: ${isPremium} (Estado Stripe: ${stripeSubscription.status})`,
+      ` Usuario ${userId} actualizado automáticamente -> isPremium: ${isPremium} (Estado Stripe: ${stripeSubscription.status})`,
     );
 
     this.logger.log(
@@ -201,7 +191,6 @@ export class SubscriptionsService {
     return savedSubscription;
   }
 
-  //clientes y planes
   async getOrCreateCustomer(userId: string): Promise<string> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
@@ -324,7 +313,6 @@ export class SubscriptionsService {
         SubscriptionStatus.CANCELED,
       );
 
-      // 👇 Aseguramos que se quite el premium si se cancela por impago
       await this.userRepository.update(subscription.userId, {
         isPremium: false,
       });
@@ -349,7 +337,6 @@ export class SubscriptionsService {
 
     if (immediately) {
       await this.stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
-      // 👇 Si es inmediata, quitamos premium ya
       await this.userRepository.update(userId, { isPremium: false });
     } else {
       await this.stripe.subscriptions.update(

@@ -4,22 +4,22 @@ import {
   Param,
   Patch,
   Body,
-  // UseGuards,
   Query,
   ForbiddenException,
+  UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
-// import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-// import { RolesGuard } from 'src/guards/roles.guard';
-// import { Roles } from 'src/decorators/role.decorator';
-// import { Role } from 'src/users/entities/user.entity';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/role.decorator';
+import { Role } from 'src/users/entities/user.entity';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { BlockUserDto } from './dto/block-user.dto';
 
 @ApiTags('Admin')
-// @UseGuards(JwtAuthGuard, RolesGuard)
-// @Roles(Role.ADMIN)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @Controller('admin')
 export class AdminController {
   usersService: any;
