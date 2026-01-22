@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
@@ -133,5 +134,18 @@ export class TutorialsService {
 
   remove(id: string) {
     return this.tutorialRepository.delete(id);
+  }
+
+  async findByRecipe(recipeId: string): Promise<Tutorial> {
+    const tutorial = await this.tutorialRepository.findOne({
+      where: { recipe: { id: recipeId } },
+      relations: ['recipe', 'user'],
+    });
+
+    if (!tutorial) {
+      throw new BadRequestException('Tutorial no encontrado para esta receta');
+    }
+
+    return tutorial;
   }
 }
