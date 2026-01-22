@@ -89,7 +89,7 @@ export class Post {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.posts, { nullable: false })
+  @ManyToOne(() => User, (user) => user.posts, { eager: true })
   creator: User;
 
   @Column({ default: 'SAFE' })
