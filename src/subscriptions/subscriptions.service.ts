@@ -152,7 +152,9 @@ export class SubscriptionsService {
 
     const subscriptionData = {
       stripeSubscriptionId: stripeSubscription.id,
-      stripeCustomerId: stripeSubscription.customer as string,
+      // ❌ ELIMINADO: stripeCustomerId no existe en la DB.
+      // TypeScript se quejará, pero lo solucionamos abajo con 'as any'.
+
       stripePriceId: subscriptionItem.price.id,
       status: stripeSubscription.status as SubscriptionStatus,
       plan:
@@ -168,8 +170,23 @@ export class SubscriptionsService {
       }),
       userId: userId,
     };
-    const savedSubscription =
-      await this.subscriptionsRepository.upsert(subscriptionData);
+
+    // 👇👇👇 EL CAMBIO CLAVE 👇👇👇
+    // Usamos 'as any' para forzar a TypeScript a aceptar el objeto sin stripeCustomerId
+    // Esto permite compilar SIN el dato que hacía explotar la base de datos.
+    const savedSubscription = await this.subscriptionsRepository.upsert(
+      subscriptionData as any,
+    );
+
+    // 2. Actualizamos el flag isPremium del USUARIO basándonos en el estado
+    const premiumStatuses = ['active', 'trialing', 'past_due'];
+    const isPremium = premiumStatuses.includes(stripeSubscription.status);
+
+    await this.userRepository.update(userId, { isPremium: isPremium });
+
+    this.logger.log(
+      `✅ Usuario ${userId} actualizado automáticamente -> isPremium: ${isPremium} (Estado Stripe: ${stripeSubscription.status})`,
+    );
 
     this.logger.log(
       `Suscripción ${stripeSubscription.id} actualizada - Status: ${stripeSubscription.status}`,
@@ -183,6 +200,7 @@ export class SubscriptionsService {
     }
     return savedSubscription;
   }
+
   //clientes y planes
   async getOrCreateCustomer(userId: string): Promise<string> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -306,6 +324,11 @@ export class SubscriptionsService {
         SubscriptionStatus.CANCELED,
       );
 
+      // 👇 Aseguramos que se quite el premium si se cancela por impago
+      await this.userRepository.update(subscription.userId, {
+        isPremium: false,
+      });
+
       this.logger.log('Cancelación completada', context);
     } catch (error) {
       const message =
@@ -326,6 +349,8 @@ export class SubscriptionsService {
 
     if (immediately) {
       await this.stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
+      // 👇 Si es inmediata, quitamos premium ya
+      await this.userRepository.update(userId, { isPremium: false });
     } else {
       await this.stripe.subscriptions.update(
         subscription.stripeSubscriptionId,
