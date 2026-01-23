@@ -41,10 +41,7 @@ export class AuthService {
     }
 
     if (user.blocked) {
-      return {
-        error: 'USER_BLOCKED',
-        message: 'Usuario bloqueado',
-      };
+      throw new ForbiddenException('USER_BLOCKED');
     }
 
     // Definimos el payload una sola vez para reutilizar lógica
