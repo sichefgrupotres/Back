@@ -23,7 +23,7 @@ export class UsersService {
     // 👇 INYECCIÓN DEL REPO TYPEORM (Necesario para la consulta del chat)
     @InjectRepository(User)
     private readonly typeOrmUserRepo: Repository<User>,
-  ) { }
+  ) {}
 
   // 👇👇 ESTA ES LA FUNCIÓN QUE TE FALTA 👇👇
   async findAllChatUsers(currentUserId: string): Promise<User[]> {
@@ -31,12 +31,14 @@ export class UsersService {
 
     query
       .where('user.id != :currentUserId', { currentUserId })
-      .andWhere(new Brackets((qb) => {
-        // 👇 SOLUCIÓN: Solo buscamos el valor válido del Enum (Mayúscula)
-        qb.where('user.roleId = :role', { role: 'CREATOR' })
-          // .orWhere('user.roleId = :r2', { r2: 'creator' }) <--- ESTA LINEA LA BORRAMOS, ERA LA CULPABLE
-          .orWhere('user.isPremium = :premium', { premium: true });
-      }))
+      .andWhere(
+        new Brackets((qb) => {
+          // 👇 SOLUCIÓN: Solo buscamos el valor válido del Enum (Mayúscula)
+          qb.where('user.roleId = :role', { role: 'CREATOR' })
+            // .orWhere('user.roleId = :r2', { r2: 'creator' }) <--- ESTA LINEA LA BORRAMOS, ERA LA CULPABLE
+            .orWhere('user.isPremium = :premium', { premium: true });
+        }),
+      )
       .select([
         'user.id',
         'user.name',
@@ -44,7 +46,7 @@ export class UsersService {
         'user.email',
         'user.avatarUrl',
         'user.roleId',
-        'user.isPremium'
+        'user.isPremium',
       ]);
 
     return await query.getMany();

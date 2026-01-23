@@ -39,7 +39,6 @@ export class PostsRepository {
     const qb = this.postsRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.creator', 'creator');
-    // .loadRelationCountAndMap('post.favoritesCount', 'post.favoritedBy');
 
     if (filters.creatorId) {
       qb.andWhere('creator.id = :creatorId', {

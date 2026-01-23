@@ -148,8 +148,8 @@ export class UsersRepository {
   async findUsersByRole(roleName: string): Promise<User[]> {
     return await this.usersRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.roleId', 'role')
-      .where('role.name = :roleName', { roleName })
+      .leftJoinAndSelect('user.posts', 'posts') // relación real
+      .where('user.roleId = :roleName', { roleName }) // enum
       .getMany();
   }
 
