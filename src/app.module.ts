@@ -17,7 +17,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { WebhooksModule } from './WebhooksModule/webhooks.Module';
 import { ChatModule } from './chat/chat.module';
 import { PushNotificationsModule } from './notifications/push-notifications/push-notifications.module';
-import { FavoritesModule } from './favorites/favorites.module'; // 👈 Importar
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [
