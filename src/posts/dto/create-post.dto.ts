@@ -45,7 +45,7 @@ export class CreatePostDto {
   @IsOptional()
   @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
   @ApiProperty({ example: 'https://miimagen.com/imagen.jpg' })
-  imagen?: string;
+  imageUrl?: string;
 
   @IsOptional()
   @ApiProperty({
@@ -64,6 +64,10 @@ export class CreatePostDto {
   @IsArray()
   @IsEnum(PostCategory, { each: true })
   category: PostCategory[];
+
+  @IsOptional()
+  @IsString()
+  cloudinaryId?: string;
 
   @IsOptional()
   @IsBoolean({ message: 'isPremium debe ser un valor booleano' })
