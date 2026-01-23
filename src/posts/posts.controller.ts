@@ -122,7 +122,6 @@ export class PostsController {
     return this.postsService.create(post, file, user);
   }
 
-  // 1. ENDPOINT PARA OBTENER LA LISTA (Debe ir ANTES de :id)
   @ApiOperation({ summary: 'Obtener mis posts favoritos' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -134,7 +133,6 @@ export class PostsController {
     return this.favoritesService.getUserFavorites(userId);
   }
 
-  // 2. ENDPOINT PARA TOGGLE FAVORITE (Dar like)
   @ApiOperation({ summary: 'Agregar o quitar de favoritos' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -188,11 +186,10 @@ export class PostsController {
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
-      // 👇 Ahora esta línea funcionará porque ya agregaste la función abajo
+
       const decoded = this.decodeToken(token);
 
       if (decoded) {
-        // Buscamos el ID en las propiedades comunes (sub, userId, o id)
         userId = decoded.sub || decoded.userId || decoded.id;
         console.log('✅ Usuario identificado en Posts:', userId);
       }
@@ -217,8 +214,9 @@ export class PostsController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
+    @Req() req,
   ) {
-    return this.postsService.update(id, updatePostDto);
+    return this.postsService.update(id, updatePostDto, req.user);
   }
 
   @ApiOperation({
@@ -231,7 +229,6 @@ export class PostsController {
     return this.postsService.remove(id);
   }
 
-  // 👇 FUNCIÓN AUXILIAR PARA LEER EL TOKEN
   private decodeToken(token: string) {
     try {
       const base64Payload = token.split('.')[1];
@@ -240,5 +237,14 @@ export class PostsController {
     } catch (e) {
       return null;
     }
+  }
+
+  @Patch(':id/image')
+  @UseInterceptors(FileInterceptor('image'))
+  updateImage(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.postsService.updateImage(id, file);
   }
 }

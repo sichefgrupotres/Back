@@ -140,9 +140,11 @@ export class PostsRepository {
 
   async remove(id: string) {
     const post = await this.postsRepository.findOneBy({ id });
+
     if (!post) {
       throw new NotFoundException('Post no encontrado');
     }
+
     await this.postsRepository.remove(post);
 
     return {

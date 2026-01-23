@@ -34,6 +34,7 @@ export class PostsService {
     @InjectRepository(Favorite)
     private readonly favoritesRepository: Repository<Favorite>,
   ) {}
+
   async cleanDatabase() {
     await this.dataSource.query(`
       TRUNCATE TABLE favorite RESTART IDENTITY CASCADE;
@@ -164,8 +165,46 @@ export class PostsService {
     return this.postsRepository.findOne(id);
   }
 
-  update(id: string, updatePostDto: UpdatePostDto) {
-    return this.postsRepository.update(id, updatePostDto);
+  async update(id: string, updatePostDto: UpdatePostDto, user: any) {
+    const post = await this.postsRepository.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException('Post no encontrado');
+    }
+
+    const moderationResult = await this.postModerationService.moderatePost(
+      {
+        title: updatePostDto.title ?? post.title,
+        description: updatePostDto.description ?? post.description,
+        ingredients: updatePostDto.ingredients ?? post.ingredients,
+      },
+      user.email,
+    );
+
+    if (moderationResult.statusPost === PostStatus.BLOCKED) {
+      this.eventEmitter.emit(
+        'post.blocked',
+        new PostEvent(
+          updatePostDto.title ?? post.title,
+          post.imageUrl,
+          user.email,
+          moderationResult.results[0].category,
+        ),
+      );
+    }
+
+    await this.postsRepository.update(id, {
+      ...updatePostDto,
+      statusPost: moderationResult.statusPost,
+    });
+
+    const updatedPost = await this.postsRepository.findOne(id);
+
+    return {
+      message: moderationResult.alertMessage,
+      statusPost: moderationResult.statusPost,
+      post: updatedPost,
+    };
   }
 
   remove(id: string) {
@@ -220,5 +259,24 @@ export class PostsService {
 
     await this.favoritesRepository.save(newFavorite);
     return { isFavorite: true, message: 'Agregado a favoritos' };
+  }
+
+  async updateImage(id: string, file: Express.Multer.File) {
+    const post = await this.postsRepository.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException('Post no encontrado');
+    }
+
+    const result = await this.uploadImageClou.uploadImage(file);
+
+    await this.postsRepository.update(id, {
+      imageUrl: result.secure_url,
+      cloudinaryId: result.public_id,
+    });
+
+    return {
+      imageUrl: result.secure_url,
+    };
   }
 }

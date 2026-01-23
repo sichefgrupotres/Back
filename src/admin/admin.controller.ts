@@ -5,7 +5,6 @@ import {
   Patch,
   Body,
   Query,
-  ForbiddenException,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
@@ -71,12 +70,6 @@ export class AdminController {
   @Patch('users/:id/block')
   async blockUser(@Param('id') id: string, @Body() dto: BlockUserDto) {
     await this.adminService.blockUser(id, dto.blocked);
-
-    if (dto.blocked) {
-      // Lanza un error 403 que NextAuth puede detectar
-      throw new ForbiddenException({ error: 'USER_BLOCKED' });
-    }
-
     return {
       message: `Usuario ${dto.blocked ? 'bloqueado' : 'desbloqueado'} correctamente`,
     };
