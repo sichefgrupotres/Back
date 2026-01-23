@@ -68,7 +68,6 @@ export class WebhooksController {
 
     this.logger.log(`Webhook received: ${event.type}`);
 
-    // Manejar diferentes eventos
     try {
       switch (event.type) {
         case 'checkout.session.completed': {
@@ -120,7 +119,6 @@ export class WebhooksController {
     return { received: true };
   }
 
-  // HANDLERS DE EVENTOS
   private async handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     const context = `Sub-${subscription.id.slice(-6)}`;
 
@@ -130,7 +128,6 @@ export class WebhooksController {
 
     await this.subscriptionsService.handleSubscriptionEvent(subscription);
 
-    // Logs según estado
     if (subscription.status === 'trialing' && subscription.trial_end) {
       const trialEnd = new Date(subscription.trial_end * 1000);
       this.logger.log(
@@ -216,7 +213,6 @@ export class WebhooksController {
         invoiceData.subscription,
       );
 
-      // Actualiza en DB (pasará a past_due)
       await this.subscriptionsService.handleSubscriptionEvent(
         stripeSubscription,
       );
